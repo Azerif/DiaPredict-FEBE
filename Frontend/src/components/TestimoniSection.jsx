@@ -71,11 +71,10 @@ const ReviewCard = ({ img, name, username, body }) => {
   return (
     <figure
       className={cn(
-        "relative h-full w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
-        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
+        "relative h-full md:w-64 w-48 cursor-pointer overflow-hidden rounded-xl border md:p-4 p-2",
+        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05] mx-5",
         "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
-      )}
-    >
+      )}>
       <div className="flex flex-row items-center gap-2">
         <img
           className="rounded-full object-cover"
@@ -98,13 +97,16 @@ const ReviewCard = ({ img, name, username, body }) => {
 
 export function MarqueeDemo() {
   return (
-    <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-      <Marquee pauseOnHover className="[--duration:20s]">
+    <div className="relative flex w-full flex-col items-center justify-center overflow-hidden py-12">
+      <Marquee pauseOnHover className="[--duration:20s] [--gap:2rem]">
         {firstRow.map((review, i) => (
           <ReviewCard key={i} {...review} />
         ))}
       </Marquee>
-      <Marquee reverse pauseOnHover className="[--duration:20s]">
+      <Marquee
+        reverse
+        pauseOnHover
+        className="[--duration:16s] [--gap:2rem] mt-8">
         {secondRow.map((review, i) => (
           <ReviewCard key={i + 100} {...review} />
         ))}
