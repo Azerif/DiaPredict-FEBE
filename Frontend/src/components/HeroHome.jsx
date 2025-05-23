@@ -1,3 +1,4 @@
+      {/* Ini ganti aja kalo ada gambar yg lebih bagus*/}
 import pict from "../assets/download (5).png";
 export default function HeroHome() {
   return (
