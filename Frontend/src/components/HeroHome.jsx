@@ -1,3 +1,4 @@
+{/* INI PICT BISA DI CARI GAMBAR YG LEBIH BAGUS MASIH BINGUNG NYARI GAMBAR YG COCOK TADI */}
 import pict from "../assets/download (5).png";
 export default function HeroHome() {
   return (
