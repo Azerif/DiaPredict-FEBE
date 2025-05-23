@@ -3,7 +3,16 @@ import RegisterImage from '../assets/loginRegist-img/register.png'
 
 const RegisterPage = () => {
   return (
-    <section className="flex flex-col-reverse h-screen md:flex-row md:h-screen">
+    <section className="flex flex-col h-screen md:flex-row md:h-screen">
+         {/* BOX GAMBAR */}
+        <div className="w-full md:w-1/2">
+            <img
+            src={RegisterImage}
+            alt="Login"
+            className="w-full h-[100px] md:h-full object-cover"
+            />
+        </div>
+
         {/* BOX CONTENT */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-10 bg-white">
             <div className="w-full max-w-md">
@@ -66,15 +75,6 @@ const RegisterPage = () => {
                     </p>
                 </form>
             </div>
-        </div>
-
-        {/* BOX GAMBAR */}
-        <div className="w-full md:w-1/2">
-            <img
-            src={RegisterImage}
-            alt="Login"
-            className="w-full h-[150px] md:h-full object-cover"
-            />
         </div>
     </section>
   )

@@ -1,8 +1,8 @@
 import React from 'react'
 
-const ServicesSection = () => {
+const ServicesSection = ({ id }) => {
   return (
-    <section className='max-w-[350px] mx-auto sm:max-w-[550px] md:max-w-[1200px] mb-30 bg-[#CCF1F9] py-10 px-10 md:px-8 text-center shadow-xl rounded-xl'>
+    <section id={id} className='max-w-[350px] mx-auto sm:max-w-[550px] md:max-w-[1200px] mb-30 bg-[#CCF1F9] py-10 px-10 md:px-8 text-center shadow-xl rounded-xl'>
         <h2 className='text-4xl font-bold text-[#00B7E0] text-center mb-20'>Layanan Kami</h2>
         <div className="max-w-[1000px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>

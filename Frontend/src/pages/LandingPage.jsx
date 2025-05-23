@@ -14,9 +14,9 @@ const LandingPage = () => {
       <Navbar />
       <HeroSection />
       <MitraSection />
-      <AboutSection />
-      <ServicesSection />
-      <TestimoniSection />
+      <AboutSection id="about"/>
+      <ServicesSection id="services"/>
+      <TestimoniSection id="testimoni"/>
       <FaqSection />
       <Footer />
     </div>

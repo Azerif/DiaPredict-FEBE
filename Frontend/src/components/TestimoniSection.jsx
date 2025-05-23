@@ -95,9 +95,9 @@ const ReviewCard = ({ img, name, username, body }) => {
   );
 };
 
-export function MarqueeDemo() {
+export function MarqueeDemo({ id = "testimoni" }) {
   return (
-    <div className="relative flex w-full flex-col items-center justify-center overflow-hidden py-12">
+    <section id={id} className="relative flex w-full flex-col items-center justify-center overflow-hidden py-12">
       <Marquee pauseOnHover className="[--duration:20s] [--gap:2rem]">
         {firstRow.map((review, i) => (
           <ReviewCard key={i} {...review} />
@@ -113,6 +113,6 @@ export function MarqueeDemo() {
       </Marquee>
       <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
       <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
-    </div>
+    </section>
   );
 }

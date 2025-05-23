@@ -20,9 +20,9 @@ const Navbar = () => {
 
         <nav className='hidden md:block'>
           <ul className='flex gap-4 text-lg font-medium'>
-            <li><a href="#" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Tentang</a></li>
-            <li><a href="#" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Layanan</a></li>
-            <li><a href="#" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Ulasan</a></li>
+            <li><a href="#about" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Tentang</a></li>
+            <li><a href="#services" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Layanan</a></li>
+            <li><a href="#testimoni" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Ulasan</a></li>
             <li><a href="#" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Artikel</a></li>
           </ul>
         </nav>
@@ -39,9 +39,9 @@ const Navbar = () => {
         `}
       >
         <ul className='flex flex-col gap-2 text-lg font-medium items-center'>
-          <li><a href="#" className='block px-2 py-1 hover:text-[#00B7E0]'>Tentang</a></li>
-          <li><a href="#" className='block px-2 py-1 hover:text-[#00B7E0]'>Layanan</a></li>
-          <li><a href="#" className='block px-2 py-1 hover:text-[#00B7E0]'>Ulasan</a></li>
+          <li><a href="#about" className='block px-2 py-1 hover:text-[#00B7E0]'>Tentang</a></li>
+          <li><a href="#services" className='block px-2 py-1 hover:text-[#00B7E0]'>Layanan</a></li>
+          <li><a href="#testimoni" className='block px-2 py-1 hover:text-[#00B7E0]'>Ulasan</a></li>
           <li><a href="#" className='block px-2 py-1 hover:text-[#00B7E0]'>Artikel</a></li>
         </ul>
         <a href="#" className='block mt-2 text-center text-white bg-[#00B7E0] py-2 rounded-4xl hover:bg-[#0092b3]'>LOGIN</a>

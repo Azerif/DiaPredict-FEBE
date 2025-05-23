@@ -1,8 +1,8 @@
 import React from 'react'
 
-const AboutSection = () => {
-  return (
-    <section className='max-w-[1200px] mx-auto mb-30'>
+const AboutSection = ({ id }) => {
+  return (   
+    <section id={id} className='max-w-[1200px] mx-auto mb-30 pt-10'>
         <h2 className='text-4xl font-bold text-[#00B7E0] text-center mb-10'>Tentang Kami</h2>
         <div className='grid grid-cols-1 px-10 md:grid-cols-2 gap-8 items-start relative'>
             {/* Kolom Kiri */}
