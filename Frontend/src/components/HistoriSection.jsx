@@ -52,7 +52,7 @@ export default function HistoriSection() {
   })).filter((group) => group.items.length > 0);
 
   return (
-    <div className="max-w-3xl mx-auto p-4 text-black">
+    <section className="max-w-3xl mx-auto p-4 text-black mb-20">
         <div className='flex flex-col md:flex-row md:items-center md:justify-between'>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 Riwayat Prediksi <span>🕒</span>
@@ -128,6 +128,6 @@ export default function HistoriSection() {
           })}
         </div>
       ))}
-    </div>
+    </section>
   );
 }

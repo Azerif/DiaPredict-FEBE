@@ -19,3 +19,9 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+@theme {
+  --color-blueFigma: #00b7e0;
+  --font-dmSans: "DM Sans", "sans-serif";
+  --color-lightBlueFigma: #ccf1f9;
+}
