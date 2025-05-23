@@ -3,7 +3,7 @@ import LoginImage from '../assets/loginRegist-img/login.png'
 
 const LoginPage = () => {
   return (
-    <section className="flex flex-col-reverse min-h-screen md:flex-row md:h-screen">
+    <section className="flex flex-col-reverse h-screen md:flex-row md:h-screen">
         {/* BOX CONTENT */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-10 bg-white">
             <div className="w-full max-w-md">
@@ -27,7 +27,7 @@ const LoginPage = () => {
                         <label className='font-medium'>Kata Sandi</label>
                         <input
                             type="password"
-                            placeholder="*******************"
+                            placeholder="Masukkan Kata Sandi"
                             className="w-full p-2 border rounded"
                             required
                         />
@@ -66,7 +66,7 @@ const LoginPage = () => {
             <img
             src={LoginImage}
             alt="Login"
-            className="w-full h-auto md:h-full object-cover"
+            className="w-full h-[150px] md:h-full object-cover"
             />
         </div>
     </section>

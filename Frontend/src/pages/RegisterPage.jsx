@@ -3,16 +3,7 @@ import RegisterImage from '../assets/loginRegist-img/register.png'
 
 const RegisterPage = () => {
   return (
-    <section className="flex flex-col-reverse min-h-screen md:flex-row md:h-screen">
-         {/* BOX GAMBAR */}
-        <div className="w-full md:w-1/2">
-            <img
-            src={RegisterImage}
-            alt="Login"
-            className="w-full h-auto md:h-full object-cover"
-            />
-        </div>
-
+    <section className="flex flex-col-reverse h-screen md:flex-row md:h-screen">
         {/* BOX CONTENT */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-10 bg-white">
             <div className="w-full max-w-md">
@@ -46,7 +37,7 @@ const RegisterPage = () => {
                         <label className='font-medium'>Kata Sandi</label>
                         <input
                             type="password"
-                            placeholder="*******************"
+                            placeholder="Masukkan Kata Sandi"
                             className="w-full p-2 border rounded"
                             required
                         />
@@ -56,7 +47,7 @@ const RegisterPage = () => {
                         <label className='font-medium'>Konfirmasi Kata Sandi</label>
                         <input
                             type="password"
-                            placeholder="*******************"
+                            placeholder="Konfirmasi Kata Sandi"
                             className="w-full p-2 border rounded"
                             required
                         />
@@ -75,6 +66,15 @@ const RegisterPage = () => {
                     </p>
                 </form>
             </div>
+        </div>
+
+        {/* BOX GAMBAR */}
+        <div className="w-full md:w-1/2">
+            <img
+            src={RegisterImage}
+            alt="Login"
+            className="w-full h-[150px] md:h-full object-cover"
+            />
         </div>
     </section>
   )
