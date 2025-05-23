@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import './App.css'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 import LandingPage from './pages/LandingPage'
 import HistoriPage from './pages/HistoriPage'
 
@@ -9,6 +11,8 @@ function App() {
   return (
     <div>
       <LandingPage />
+      {/* <LoginPage /> */}
+      <RegisterPage />
       <HistoriPage />
     </div>
   )
