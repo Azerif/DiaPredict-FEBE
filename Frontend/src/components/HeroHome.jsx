@@ -11,7 +11,8 @@ export default function HeroHome() {
             <span className="text-blueFigma">Predict</span>
           </h1>
           <p className="text-base md:text-xl mb-6">
-            DiaPredict membantu Anda memahami risiko diabetes lebih awal agar Anda bisa hidup lebih tenang dan terarah.
+            DiaPredict membantu Anda memahami risiko diabetes lebih awal agar
+            Anda bisa hidup lebih tenang dan terarah.
           </p>
           <a
             href="#formArea"

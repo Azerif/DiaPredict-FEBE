@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import Stepper from "../components/stepper";
+import Stepper from "../compoents/stepper";
 import PredictResult from "./PredictResult";
+import { confirmForm } from "../lib/alerts";
 
 export default function PredictForm() {
   const [jekel, setJekel] = useState("Laki-Laki");
@@ -15,6 +16,7 @@ export default function PredictForm() {
   const [gulaDarah, setGulaDarah] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [bmi, setBmi] = useState(0);
+  const [umur, setUmur] = useState();
 
   useEffect(() => {
     if (tinggi && berat) {
@@ -27,14 +29,28 @@ export default function PredictForm() {
     }
   }, [tinggi, berat]);
 
+  useEffect(() => {
+    if (date) {
+      const today = new Date();
+      const birthDate = new Date(date);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      setUmur(age);
+    }
+  }, [date]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setCurrentStep(1);
   };
 
-  const handleSubmitStep2 = (e) => {
+  const handleSubmitStep2 = async (e) => {
     e.preventDefault();
-    // Kirim data di sini jika diperlukan
     console.log({
       jekel,
       tinggi,
@@ -46,12 +62,32 @@ export default function PredictForm() {
       hemoglobin,
       gulaDarah,
       bmi,
+      umur,
     });
-    setIsSubmitted(true);
+    await confirmForm().then((result) => {
+      if (result.isConfirmed) {
+        setIsSubmitted(true);
+      }
+    });
+  };
+  const handleReset = () => {
+    setJekel("Laki-Laki");
+    setTinggi("");
+    setBerat("");
+    setDate("");
+    setSelectedHipertensi("ya");
+    setSelectedJantung("ya");
+    setMerokok("tidak");
+    setHemoglobin("");
+    setGulaDarah("");
+    setBmi(0);
+    setUmur();
+    setCurrentStep(0);
+    setIsSubmitted(false);
   };
 
   return (
-    <main id="formArea" className="w-4/5 md:w-1/2 mx-auto mt-20 p-5 border-4 border-blueFigma mb-20 shadow-lg rounded">
+    <main className="w-4/5 md:w-1/2 mx-auto mt-20 p-5 border-4 border-blueFigma mb-20 shadow-lg rounded">
       {!isSubmitted && (
         <>
           <h1 className="text-center text-4xl text-blueFigma font-bold">
@@ -75,6 +111,7 @@ export default function PredictForm() {
                         checked={jekel === gender}
                         onChange={(e) => setJekel(e.target.value)}
                         className="hidden"
+                        required
                       />
                       <label
                         htmlFor={gender}
@@ -112,6 +149,7 @@ export default function PredictForm() {
                     value={tinggi}
                     onChange={(e) => setTinggi(e.target.value)}
                     className="w-1/2 border border-gray-300 rounded px-3 py-2"
+                    required
                   />
                   <input
                     type="number"
@@ -119,6 +157,7 @@ export default function PredictForm() {
                     onChange={(e) => setBerat(e.target.value)}
                     placeholder="65 kg"
                     className="w-1/2 border border-gray-300 rounded px-3 py-2"
+                    required
                   />
                 </div>
               </div>
@@ -132,6 +171,7 @@ export default function PredictForm() {
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   className="border px-3 py-2 rounded"
+                  required
                 />
               </div>
 
@@ -261,7 +301,7 @@ export default function PredictForm() {
 
       {isSubmitted && (
         <div className="flex items-center gap-10 mjustify-center flex-col">
-          <PredictResult RiskValue={58}></PredictResult>
+          <PredictResult RiskValue={58} onReset={handleReset}></PredictResult>
         </div>
       )}
     </main>

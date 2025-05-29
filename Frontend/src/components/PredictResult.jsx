@@ -1,4 +1,6 @@
-export default function PredictResult({ RiskValue }) {
+import FaskesTerdekat from "./FaskesMap";
+
+export default function PredictResult({ RiskValue, onReset }) {
   let status = "Rendah";
   if (RiskValue >= 70) status = "Tinggi";
   else if (RiskValue >= 40) status = "Sedang";
@@ -35,6 +37,36 @@ export default function PredictResult({ RiskValue }) {
           {status}
         </span>
       </h2>
+      <div className="flex flex-col gap-2 md:flex-row justify-between items-center  w-9/10">
+        <button
+          className="p-2 bg-blueFigma rounded text-white"
+          onClick={onReset}
+        >
+          Buat Hasil Prediksi Baru
+        </button>
+        <button
+          className="btn bg-blueFigma border-none text-white rounded"
+          onClick={() => document.getElementById("my_modal_5").showModal()}
+        >
+          Langkah Selanjutnya
+        </button>
+
+        <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+          <div className="modal-box bg-white">
+            <h3 className="font-bold text-lg">
+              Rujukan ke fasilitas kesehatan terdekat
+            </h3>
+            <FaskesTerdekat></FaskesTerdekat>
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn bg-blueFigma border-none text-white rounded">
+                  Close
+                </button>
+              </form>
+            </div>
+          </div>
+        </dialog>
+      </div>
     </>
   );
 }
