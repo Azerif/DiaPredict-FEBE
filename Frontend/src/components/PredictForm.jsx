@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Stepper from "../compoents/stepper";
+import Stepper from "../components/stepper";
 import PredictResult from "./PredictResult";
 
 export default function PredictForm() {
@@ -51,7 +51,7 @@ export default function PredictForm() {
   };
 
   return (
-    <main className="w-4/5 md:w-1/2 mx-auto mt-20 p-5 border-4 border-blueFigma mb-20 shadow-lg rounded">
+    <main id="formArea" className="w-4/5 md:w-1/2 mx-auto mt-20 p-5 border-4 border-blueFigma mb-20 shadow-lg rounded">
       {!isSubmitted && (
         <>
           <h1 className="text-center text-4xl text-blueFigma font-bold">

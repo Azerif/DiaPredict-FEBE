@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,13 +24,13 @@ const Navbar = () => {
             <li><a href="#about" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Tentang</a></li>
             <li><a href="#services" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Layanan</a></li>
             <li><a href="#testimoni" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Ulasan</a></li>
-            <li><a href="#" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Artikel</a></li>
+            <li><Link to="/education" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Artikel</Link></li>
           </ul>
         </nav>
 
-        <a href="#" className='hidden md:inline-block text-lg font-medium text-white bg-[#00B7E0] px-5 py-2 rounded-4xl hover:bg-[#0092b3] transition-colors shadow-md'>
+        <Link to="/login" className='hidden md:inline-block text-lg font-medium text-white bg-[#00B7E0] px-5 py-2 rounded-4xl hover:bg-[#0092b3] transition-colors shadow-md'>
           LOGIN
-        </a>
+        </Link>
       </div>
 
       {/* Mobile Navigation*/}
@@ -42,9 +43,9 @@ const Navbar = () => {
           <li><a href="#about" className='block px-2 py-1 hover:text-[#00B7E0]'>Tentang</a></li>
           <li><a href="#services" className='block px-2 py-1 hover:text-[#00B7E0]'>Layanan</a></li>
           <li><a href="#testimoni" className='block px-2 py-1 hover:text-[#00B7E0]'>Ulasan</a></li>
-          <li><a href="#" className='block px-2 py-1 hover:text-[#00B7E0]'>Artikel</a></li>
+          <li><Link to="/education" className='block px-2 py-1 hover:text-[#00B7E0]'>Artikel</Link></li>
         </ul>
-        <a href="#" className='block mt-2 text-center text-white bg-[#00B7E0] py-2 rounded-4xl hover:bg-[#0092b3]'>LOGIN</a>
+        <Link to="/login" className='block mt-2 text-center text-white bg-[#00B7E0] py-2 rounded-4xl hover:bg-[#0092b3]'>LOGIN</Link>
       </div>
     </header>
   );

@@ -1,5 +1,10 @@
+import Footer from "../components/Footer";
+import NavbarAfter from "../components/NavbarAfter";
+
 export default function Dashboard() {
   return (
+    <div>
+    <NavbarAfter />
     <main>
       <h1 className="text-center mt-10 font-medium text-3xl">Edit Profil</h1>
       <section className="max-w-3xl mx-auto md:grid grid-cols-2 items-center hidden">
@@ -201,6 +206,8 @@ export default function Dashboard() {
         </section>
       </section>
     </main>
+  <Footer />
+  </div>
   );
 }
 

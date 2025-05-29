@@ -1,12 +1,12 @@
 import React from 'react'
 import HistoriSection from '../components/HistoriSection'
 import Footer from '../components/Footer'
-import NavbarLogin from '../components/NavbarLogin'
+import NavbarAfter from '../components/NavbarAfter'
 
 const HistoriPage = () => {
   return (
     <div>
-        <NavbarLogin />
+        <NavbarAfter />
         <HistoriSection />
         <Footer />
     </div>

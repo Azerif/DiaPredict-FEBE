@@ -1,5 +1,7 @@
 import React from 'react'
 import Hero from '../assets/img/Hero.png'
+import { Link } from 'react-router-dom';
+
 
 const HeroSection = () => {
   return (
@@ -12,12 +14,12 @@ const HeroSection = () => {
         <p className='text-lg md:text-xl mb-6'>
           Kami menyediakan layanan prediksi risiko diabetes berbasis data dan AI untuk membantu Anda menjaga kesehatan lebih baik.
         </p>
-        <a
-          href="#"
+        <Link
+          to="/login"
           className='text-lg font-medium text-white bg-[#00B7E0] px-5 py-2 rounded-4xl hover:bg-[#0092b3] transition-colors delay-200 ease-in-out shadow-md'
         >
           Mulai Cek Risiko
-        </a>
+        </Link>
       </div>
 
       <img src={Hero} alt="Hero" className='w-full md:w-auto max-w-[600px] object-contain' />

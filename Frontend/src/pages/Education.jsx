@@ -1,6 +1,11 @@
-import TabInterfaces from "../compoents/tabbedInterfaces";
+import TabInterfaces from "../components/tabbedInterfaces";
+import Footer from "../components/Footer";
+import NavbarAfter from "../components/NavbarAfter";
+
 export default function Education() {
   return (
+    <div>
+    <NavbarAfter />
     <main>
       <section className=" sm:block bg-lightBlueFigma hidden ">
         <h1 className="text-center text-5xl w-4/5 font-bold pt-8 mx-auto">
@@ -92,5 +97,7 @@ export default function Education() {
         <TabInterfaces></TabInterfaces>
       </section>
     </main>
+    <Footer />
+    </div>
   );
 }
