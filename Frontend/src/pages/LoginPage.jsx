@@ -1,17 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import LoginImage from '../assets/loginRegist-img/login.png'
 import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [checked, setChecked] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
 
-    if(email && password){
-      // validasi berhasil, pindah ke halaman home
+    if (email && password) {
       navigate('/home');
     } else {
       alert('Email dan password harus diisi!');
@@ -20,7 +20,6 @@ const LoginPage = () => {
 
   return (
     <section className="flex flex-col-reverse h-screen md:flex-row md:h-screen">
-      {/* BOX CONTENT */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-10 bg-white">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold mb-2">
@@ -55,13 +54,17 @@ const LoginPage = () => {
               <a href="#" className="font-medium hover:text-[#00B7E0]">Lupa Kata Sandi?</a>
             </div>
 
-            <div className="flex items-center justify-between mb-4 gap-2">
-              <label htmlFor="remember">Tetap Masuk</label>
+            <div className="mb-4 flex items-center gap-2">
               <input
+                id="remember"
                 type="checkbox"
-                defaultChecked
-                className="toggle border-white bg-[#7E99A3] checked:bg-[#00B7E0] checked:text-white"
+                checked={checked}
+                onChange={() => setChecked(!checked)}
+                className="w-4 h-4"
               />
+              <label htmlFor="remember" className="text-sm">
+                Tetap Masuk
+              </label>
             </div>
 
             <button
@@ -79,7 +82,6 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* BOX GAMBAR */}
       <div className="w-full md:w-1/2">
         <img
           src={LoginImage}
@@ -91,4 +93,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default LoginPage;

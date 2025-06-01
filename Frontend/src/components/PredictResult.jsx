@@ -1,4 +1,5 @@
 import FaskesTerdekat from "./FaskesMap";
+import FormTestimoni from "./FormTestimoni";
 
 export default function PredictResult({ RiskValue, onReset }) {
   let status = "Rendah";
@@ -44,8 +45,20 @@ export default function PredictResult({ RiskValue, onReset }) {
         >
           Buat Hasil Prediksi Baru
         </button>
+
+        {/* Open the modal using document.getElementById('ID').showModal() method */}
+        <button 
+          className="p-2 bg-blueFigma rounded text-white" 
+          onClick={()=>document.getElementById('my_modal_4').showModal()}
+          >
+            Beri Ulasan
+          </button>
+        <FormTestimoni />
+
+
+
         <button
-          className="btn bg-blueFigma border-none text-white rounded"
+          className="p-2 bg-blueFigma rounded text-white"
           onClick={() => document.getElementById("my_modal_5").showModal()}
         >
           Langkah Selanjutnya

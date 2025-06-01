@@ -1,30 +1,31 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Trash2, User } from 'lucide-react';
+import GrafikSection from './GrafikSection';
 
 const data = [
   {
+    bulan: 'Mei',
+    date: 'Kamis, 1 Mei 2025',
+    items: [
+        { time: '12:34', result: 78, risk: 'tinggi', },
+        { time: '14:00', result: 40, risk: 'rendah',},
+        { time: '16:30', result: 90, risk: 'tinggi',},
+    ],
+  },
+  {
+    bulan: 'Juni',
     date: 'Jumat, 13 Juni 2025',
     items: [
         {
           time: '07:00',
           result: 50,
           risk: 'sedang',
-          name: 'Kevin',
         },
         {
           time: '12:34',
           result: 78,
           risk: 'tinggi',
-          name: 'John Doe',
         },
-    ],
-  },
-  {
-    date: 'Kamis, 1 Mei 2025',
-    items: [
-        { time: '12:34', result: 78, risk: 'tinggi', name: 'Alexander' },
-        { time: '14:00', result: 40, risk: 'rendah', name: 'Immanuel' },
-        { time: '16:30', result: 90, risk: 'tinggi', name: 'Delvan' },
     ],
   },
 ];
@@ -81,6 +82,7 @@ export default function HistoriSection() {
 
       {filteredData.map((group, dateIndex) => (
         <div key={group.date} className="mb-6">
+          <h2 className="font-semibold text-gray-700">Bulan {group.bulan}</h2>
           <h3 className="font-semibold text-gray-700 mb-2">{group.date}</h3>
 
           {group.items.map((item, itemIndex) => {
@@ -96,12 +98,7 @@ export default function HistoriSection() {
                     <span>
                       Hasil Diabetes ➔ <strong>{item.result}%</strong>
                     </span>
-                    <span>
-                      Status risiko:{' '}
-                      <span className="text-red-500 font-semibold">
-                        {item.risk}
-                      </span>
-                    </span>
+                    
                   </div>
 
                   <button
@@ -112,11 +109,15 @@ export default function HistoriSection() {
                   </button>
                 </div>
 
-                {isOpen && item.name && (
+                {isOpen && (
                   <div className="mt-2 ml-20 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <User size={18} />
-                      <span className="text-sm">Nama: <strong>{item.name}</strong></span>
+                    <div className="flex items-center pl-2 gap-2">
+                      <span>
+                        Status risiko:{' '}
+                        <span className="text-red-500 font-semibold">
+                          {item.risk}
+                        </span>
+                      </span>
                     </div>
                     <button className="border rounded-full px-4 py-1 text-sm hover:bg-gray-100 flex items-center gap-1">
                       <Trash2 size={16} /> Hapus
@@ -126,6 +127,14 @@ export default function HistoriSection() {
               </div>
             );
           })}
+
+          <button 
+            className="p-2 bg-blueFigma rounded text-white text-sm mt-3" 
+            onClick={()=>document.getElementById('my_modal_3').showModal()}
+            >
+              Lihat Grafik
+            </button>
+            <GrafikSection />
         </div>
       ))}
     </section>

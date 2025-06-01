@@ -35,7 +35,7 @@ const NavbarAfter = () => {
         <nav className='hidden md:block'>
           <ul className='flex gap-4 text-lg font-medium'>
             <li><Link to="/home" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Home</Link></li>
-            {/* <li><a href='#formArea' className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Prediksi</a></li> */}
+            <li><Link to="/histori" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Histori</Link></li>
             <li><Link to="/education" className='hover:text-[#00B7E0] hover:border-b-2 hover:border-[#00B7E0] pb-1 transition-colors'>Artikel</Link></li>
           </ul>
         </nav>
@@ -85,7 +85,7 @@ const NavbarAfter = () => {
         <ul className='flex flex-col gap-2 text-lg font-medium items-center'>
           <li><Link to="/dashboard" className='block px-2 py-1 hover:text-[#00B7E0]'><img src='/assets/customers/1.jpg' className='w-12 h-12 rounded-full'></img></Link></li>
           <li><Link to="/home" className='block px-2 py-1 hover:text-[#00B7E0]'>Home</Link></li>
-          {/* <li><a href="#formArea" className='block px-2 py-1 hover:text-[#00B7E0]'>Prediksi</a></li> */}
+          <li><Link to="/histori" className='block px-2 py-1 hover:text-[#00B7E0]'>Histori</Link></li>
           <li><Link to="/education" className='block px-2 py-1 hover:text-[#00B7E0]'>Artikel</Link></li>
         </ul>
         <Link to="/" className='block mt-2 text-center text-white bg-[#00B7E0] py-2 rounded-4xl hover:bg-[#0092b3]'>Logout</Link>
