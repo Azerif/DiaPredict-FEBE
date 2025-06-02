@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { UserProvider } from './contexts/UserContext';
+import { ProtectedRoute, PublicRoute } from './routes';
 import './App.css'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -16,12 +18,12 @@ function App() {
     <BrowserRouter>
         <Routes>
           <Route path='/' element={<LandingPage />}/>
-          <Route path='/login' element={<LoginPage />}/>
-          <Route path='/register' element={<RegisterPage />}/>
-          <Route path='/home' element={<Home />}/>
-          <Route path='/dashboard' element={<Dashboard />}/>
-          <Route path='/histori' element={<HistoriPage />}/>
-          <Route path='/education' element={<Education />}/>
+          <Route path='/login' element={<PublicRoute><LoginPage /></PublicRoute>}/>
+          <Route path='/register' element={<PublicRoute><RegisterPage /></PublicRoute>}/>
+          <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>}/>
+          <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>}/>
+          <Route path='/histori' element={<ProtectedRoute><HistoriPage /></ProtectedRoute>}/>
+          <Route path='/education' element={<ProtectedRoute><Education /></ProtectedRoute>}/>
         </Routes>    
     </BrowserRouter>
   )
