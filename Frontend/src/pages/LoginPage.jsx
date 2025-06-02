@@ -1,20 +1,35 @@
-import React, { useState } from 'react'
-import LoginImage from '../assets/loginRegist-img/login.png'
+import React, { useState } from 'react';
+import LoginImage from '../assets/loginRegist-img/login.png';
 import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../api/auth';
+import { useUser } from '../contexts/UserContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useUser();
   const [checked, setChecked] = useState(false);
-
-  const handleSubmit = (e) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
 
-    if (email && password) {
-      navigate('/home');
-    } else {
+    if (!email || !password) {
       alert('Email dan password harus diisi!');
+      return;
+    }
+
+    try {
+      const res = await loginUser({ email, password });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      
+      await fetchUser();
+      
+      alert('Login berhasil! Selamat datang di DiaPredict.');
+      navigate('/home');
+    } catch (err) {
+      alert(err.message || 'Login gagal. Silakan coba lagi.');
     }
   };
 
@@ -41,13 +56,37 @@ const LoginPage = () => {
 
             <div className="mb-2">
               <label className='font-medium'>Kata Sandi</label>
-              <input
-                name="password"
-                type="password"
-                placeholder="Masukkan Kata Sandi"
-                className="w-full p-2 border rounded"
-                required
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Masukkan Kata Sandi"
+                  className="w-full p-2 border rounded pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-[#00B7E0]"
+                  aria-label="Toggle Password Visibility"
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10a9.973 9.973 0 011.875-5.825M21.125 5.175A9.973 9.973 0 0122 9c0 5.523-4.477 10-10 10a10.05 10.05 0 01-1.875-.175M3 3l18 18" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-between text-sm mb-4">
@@ -90,7 +129,7 @@ const LoginPage = () => {
         />
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default LoginPage;
