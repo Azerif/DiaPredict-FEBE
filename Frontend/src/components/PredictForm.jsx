@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Stepper from "../components/stepper";
 import PredictResult from "./PredictResult";
-import { confirmForm } from "../lib/alerts";
+import { confirmAlert } from "../lib/alerts";
 
 export default function PredictForm() {
   const [jekel, setJekel] = useState("Laki-Laki");
@@ -64,11 +64,13 @@ export default function PredictForm() {
       bmi,
       umur,
     });
-    await confirmForm().then((result) => {
-      if (result.isConfirmed) {
-        setIsSubmitted(true);
+    await confirmAlert("Apakah anda yakin data yang di isi sudah benar?").then(
+      (result) => {
+        if (result.isConfirmed) {
+          setIsSubmitted(true);
+        }
       }
-    });
+    );
   };
   const handleReset = () => {
     setJekel("Laki-Laki");
@@ -87,7 +89,10 @@ export default function PredictForm() {
   };
 
   return (
-    <main id="formArea" className="w-4/5 md:w-1/2 mx-auto p-5 mt-5 border-4 border-blueFigma mb-20 shadow-lg rounded">
+    <main
+      id="formArea"
+      className="w-4/5 md:w-1/2 mx-auto p-5 mt-5 border-4 border-blueFigma mb-20 shadow-lg rounded"
+    >
       {!isSubmitted && (
         <>
           <h1 className="text-center text-4xl text-blueFigma font-bold">

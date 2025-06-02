@@ -1,13 +1,13 @@
 import Swal from "sweetalert2";
 
-export const confirmForm = async () => {
+export const confirmAlert = async (message) => {
   return Swal.fire({
     icon: "question",
     title: "Konfirmasi",
-    text: "Apakah anda yakin data yang di isi Sudah Benar?",
+    text: message,
     showDenyButton: true,
     confirmButtonText: "Ya",
-    denyButtonText: `Belum`,
+    denyButtonText: "Tidak",
   });
 };
 
