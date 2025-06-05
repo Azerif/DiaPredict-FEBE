@@ -83,10 +83,10 @@ const callMLClusterPrediction = async (healthRecord) => {
 // Function untuk mapping cluster number ke cluster name
 const getClusterName = (clusterNumber) => {
   const clusterNames = {
-    0: 'Lansia Berisiko Tinggi',
-    1: 'Dewasa Sehat Rendah Risiko',
-    2: 'Anak dan Remaja Sehat',
-    3: 'Dewasa Muda Risiko Glukosa Tinggi'
+    0: 'Dewasa/Lansia dengan Potensi Risiko Kesehatan',
+    1: 'Dewasa Muda/Paruh Baya dengan Kesehatan Relatif Baik',
+    2: 'Anak-anak/Remaja Sehat',
+    3: 'Dewasa Muda dengan Perhatian pada Gula Darah'
   };
   return clusterNames[clusterNumber] || 'Kategori Tidak Diketahui';
 };
@@ -111,7 +111,7 @@ const callBothMLPredictions = async (healthRecord) => {
     console.error('Cluster prediction failed, using fallback:', clusterError.message);
     clusterResult = {
       predicted_cluster: 0,
-      cluster_name: 'Lansia Berisiko Tinggi',
+      cluster_name: 'Dewasa/Lansia dengan Potensi Risiko Kesehatan', // Updated fallback name
       confidence: 0.5,
       explanation: "Cluster prediction unavailable, using default value"
     };
@@ -235,7 +235,7 @@ class PredictionController {
 
       // Extract cluster information dari response API
       let clusterNumber = 0;
-      let clusterName = 'Lansia Berisiko Tinggi';
+      let clusterName = 'Dewasa/Lansia dengan Potensi Risiko Kesehatan';
       
       if (mlResults.cluster) {
         if (mlResults.cluster.predicted_cluster !== undefined) {
