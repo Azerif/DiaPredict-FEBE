@@ -21,8 +21,8 @@ const FormTestimoni = () => {
   };
 
   return (
-    <dialog id="my_modal_4" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box">
+    <dialog id="my_modal_4" className="modal modal-bottom sm:modal-middle ">
+      <div className="modal-box bg-white">
         <h3 className="font-bold text-lg mb-4">
           Bagikan Pengalaman Anda Bersama <span className="text-[#00B7E0]">Predict</span>.
         </h3>

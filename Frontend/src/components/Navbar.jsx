@@ -5,7 +5,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className='w-full px-4 md:px-8 py-3 shadow-md bg-white'>
+    <header className='w-full px-4 md:px-8 py-3 shadow-md bg-white sticky top-0 z-999'>
       <div className='flex items-center justify-between'>
         <a href="#" className='text-2xl font-bold'>
           Dia<span className='text-[#00B7E0]'>Predict</span>.

@@ -1,10 +1,15 @@
 import pict from "../assets/img/home.png";
 
-export default function HeroHome() {
+export default function HeroHome({ swiper }) {
+
+  const handleNext = () => {
+    swiper.current?.slideNext();
+  };
+
   return (
-    <section className="bg-lightBlueFigma border-b border-gray-300">
+    <section className="min-h-screen bg-lightBlueFigma border-b border-gray-300">
       <div className="max-w-[1200px] mx-auto px-6 py-10 flex flex-col-reverse md:flex-row items-center justify-between gap-8">
-        {/* Text Content */}
+        {/* Text Content /} */}
         <div className="w-full md:w-[600px] text-center md:text-left mb-8 md:mb-0">
           <h1 className="text-3xl md:text-5xl font-bold mb-6">
             Prediksi Dini, Hidup lebih Sehat Bersama Dia
@@ -15,14 +20,14 @@ export default function HeroHome() {
             Anda bisa hidup lebih tenang dan terarah.
           </p>
           <a
-            href="#formArea"
-            className="text-lg font-medium text-white bg-[#00B7E0] px-5 py-2 rounded-4xl hover:bg-[#0092b3] transition-colors delay-200 ease-in-out shadow-md inline-block"
+            onClick={handleNext}
+            className="cursor-pointer text-lg font-medium text-white bg-[#00B7E0] px-5 py-2 rounded-4xl hover:bg-[#0092b3] transition-colors delay-200 ease-in-out shadow-md inline-block"
           >
             Mulai Cek Risiko
           </a>
         </div>
 
-        {/* Image */}
+        {/* {/ Image */}
         <img
           src={pict}
           alt="Hero"

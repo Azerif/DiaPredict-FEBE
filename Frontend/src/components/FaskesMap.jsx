@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { alertSuccess, alertError } from "../lib/alerts";
 
 // Custom icon lokasi user
 const userIcon = new L.Icon({
@@ -41,7 +42,7 @@ export default function FaskesTerdekat() {
         setUserPosition([pos.coords.latitude, pos.coords.longitude]);
       },
       (err) => {
-        alert("Gagal mendapatkan lokasi: " + err.message);
+        alertError("Gagal mendapatkan lokasi: " + err.message);
       }
     );
   }, []);

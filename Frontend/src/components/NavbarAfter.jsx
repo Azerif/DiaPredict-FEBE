@@ -23,7 +23,7 @@ const NavbarAfter = () => {
     localStorage.removeItem('token');
     await clearUser();  
     setDropdownOpen(false);
-    navigate('/login');
+    navigate('/register');
   };
 
 
@@ -37,7 +37,7 @@ const NavbarAfter = () => {
   );
 
   return (
-    <header className="w-full px-4 md:px-8 py-3 shadow-md bg-white">
+    <header className="w-full px-4 md:px-20 py-3 shadow-md bg-white sticky top-0 z-999">
       <div className="flex items-center justify-between">
         <Link to="/home" className="text-2xl font-bold">
           Dia<span className="text-[#00B7E0]">Predict</span>.
@@ -103,16 +103,16 @@ const NavbarAfter = () => {
           </div>
 
           {dropdownOpen && !isLoading && (
-            <div className="absolute right-0 z-10 mt-3 w-56 bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
-              <div className="px-4 py-3 text-sm text-gray-900">
-                <div className="font-semibold">{user.name}</div>
+            <div className="absolute right-0 z-10 mt-3 w-70 bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
+              <div className="px-5 py-3 text-sm text-gray-900">
+                <div className="font-semibold ">{user.name}</div>
                 <div className="truncate">{user.email}</div>
               </div>
               <ul className="py-2 text-sm text-gray-700">
                 <li>
                   <Link
                     to="/dashboard"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-5 py-2 hover:bg-gray-100"
                     onClick={() => setDropdownOpen(false)}
                   >
                     Dashboard
@@ -122,7 +122,7 @@ const NavbarAfter = () => {
               <div className="py-2">
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-red-700 font-medium hover:bg-gray-100"
+                  className="w-full text-left px-5 py-2 text-sm text-red-700 font-medium hover:bg-gray-100"
                 >
                   Sign out
                 </button>

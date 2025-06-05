@@ -3,6 +3,7 @@ import LoginImage from '../assets/loginRegist-img/login.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/auth';
 import { useUser } from '../contexts/UserContext';
+import { alertSuccess, alertError } from "../lib/alerts";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -26,10 +27,10 @@ const LoginPage = () => {
       
       await fetchUser();
       
-      alert('Login berhasil! Selamat datang di DiaPredict.');
+      alertSuccess('Login berhasil! Selamat datang di DiaPredict.');
       navigate('/home');
     } catch (err) {
-      alert(err.message || 'Login gagal. Silakan coba lagi.');
+      alertError(err.message || 'Login gagal. Silakan coba lagi.');
     }
   };
 

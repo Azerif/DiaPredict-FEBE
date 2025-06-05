@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import RegisterImage from '../assets/loginRegist-img/register.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../api/auth';
+import { alertSuccess, alertError } from "../lib/alerts";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -42,9 +43,10 @@ const RegisterPage = () => {
         password: form.password
       });
 
+      alertSuccess('Registrasi berhasil! Silakan masuk ke akun Anda.');
       navigate('/login');
     } catch (err) {
-      setError(err.message || 'Registrasi gagal. Silakan coba lagi.');
+      alertError(err.message || 'Registrasi gagal. Silakan coba lagi.');
     }
   };
 
