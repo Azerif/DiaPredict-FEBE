@@ -34,7 +34,6 @@ class HealthRecordController {
         });
       }
       
-      // Check if record belongs to user
       if (record.user_id !== userId) {
         return res.status(403).json({ 
           success: false, 
@@ -73,34 +72,33 @@ class HealthRecordController {
         blood_glucose_level
       } = req.body;
       
-      // Calculate BMI if not provided but height and weight are
       let calculatedBmi = bmi;
       if (!bmi && height && weight) {
-        // BMI = weight(kg) / (height(m))²
         calculatedBmi = weight / Math.pow(height / 100, 2);
       }
       
-      // Calculate age from birth_date
       let age = null;
       if (birth_date) {
-        const birthDate = new Date(birth_date);
+        const birthDate = new Date(birth_date + 'T00:00:00');
         const today = new Date();
+        
         age = today.getFullYear() - birthDate.getFullYear();
         
-        // Adjust age if birthday hasn't occurred yet this year
         const monthDiff = today.getMonth() - birthDate.getMonth();
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
           age--;
         }
       }
       
-      // Create record
+      const now = new Date();
+      const localISOTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+      
       const newRecord = await HealthRecordModel.create({
         user_id: userId,
         name: name || null,
         birth_date: birth_date || null,
         gender: gender || null,
-        age: age, // Add calculated age
+        age: age,
         weight: weight || null,
         height: height || null,
         hypertension: hypertension || false,
@@ -109,7 +107,7 @@ class HealthRecordController {
         bmi: calculatedBmi || null,
         hba1c_level: hba1c_level || null,
         blood_glucose_level: blood_glucose_level || null,
-        created_at: new Date()
+        created_at: localISOTime
       });
       
       res.status(201).json({
@@ -131,7 +129,6 @@ class HealthRecordController {
       const recordId = req.params.id;
       const userId = req.user.userId;
       
-      // Check if record exists and belongs to user
       const existingRecord = await HealthRecordModel.getById(recordId);
       if (!existingRecord) {
         return res.status(404).json({ 
@@ -147,7 +144,6 @@ class HealthRecordController {
         });
       }
       
-      // Prepare update data
       const updateData = {};
       const fields = [
         'name', 'birth_date', 'gender', 'weight', 'height', 
@@ -161,7 +157,6 @@ class HealthRecordController {
         }
       });
       
-      // Calculate BMI if height and weight changed
       if ((updateData.height || updateData.weight) && 
           !updateData.bmi) {
         const height = updateData.height || existingRecord.height;
@@ -172,13 +167,11 @@ class HealthRecordController {
         }
       }
       
-      // Calculate age if birth_date changed
       if (updateData.birth_date) {
-        const birthDate = new Date(updateData.birth_date);
+        const birthDate = new Date(updateData.birth_date + 'T00:00:00');
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
         
-        // Adjust age if birthday hasn't occurred yet this year
         const monthDiff = today.getMonth() - birthDate.getMonth();
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
           age--;
@@ -187,7 +180,6 @@ class HealthRecordController {
         updateData.age = age;
       }
       
-      // Update record
       const updatedRecord = await HealthRecordModel.update(recordId, updateData);
       
       res.status(200).json({
@@ -209,7 +201,6 @@ class HealthRecordController {
       const recordId = req.params.id;
       const userId = req.user.userId;
       
-      // Check if record exists and belongs to user
       const existingRecord = await HealthRecordModel.getById(recordId);
       if (!existingRecord) {
         return res.status(404).json({ 
@@ -225,7 +216,6 @@ class HealthRecordController {
         });
       }
       
-      // Delete record
       await HealthRecordModel.delete(recordId);
       
       res.status(200).json({

@@ -1,6 +1,127 @@
 const PredictionModel = require('../models/prediction.model');
 const HealthRecordModel = require('../models/healthRecord.model');
-const { predictCluster } = require('../services/clusterPredictor');
+const axios = require('axios');
+const { BASE_URL_MODEL_FAUZAN, BASE_URL_MODEL_AZERIF } = process.env;
+
+// Helper function untuk memanggil ML API Diabetes
+const callMLDiabetesPrediction = async (healthRecord) => {
+  try {
+    const smokingHistoryMap = {
+      "tidak": "never",
+      "mantan": "former", 
+      "aktif": "current",
+      "tidak_lagi": "not current",
+      "tidak_diketahui": "No Info"
+    };
+
+    const mlData = {
+      age: healthRecord.age,
+      hypertension: healthRecord.hypertension ? 1 : 0,
+      heart_disease: healthRecord.heart_disease ? 1 : 0,
+      bmi: healthRecord.bmi,
+      HbA1c_level: healthRecord.hba1c_level,
+      blood_glucose_level: healthRecord.blood_glucose_level,
+      gender: healthRecord.gender === "Laki-Laki" ? "Male" : "Female",
+      smoking_history: smokingHistoryMap[healthRecord.smoking_history] || "No Info"
+    };
+
+    console.log('Calling Diabetes ML API with data:', mlData);
+
+    const response = await axios.post(BASE_URL_MODEL_FAUZAN + '/predict/', mlData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 30000
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Diabetes ML API call failed:', error.message);
+    throw new Error('Failed to get diabetes prediction from ML model: ' + error.message);
+  }
+};
+
+// Helper function untuk memanggil ML API Cluster dengan format yang benar
+const callMLClusterPrediction = async (healthRecord) => {
+  try {
+    const smokingHistoryMap = {
+      "tidak": "never",
+      "mantan": "former", 
+      "aktif": "current",
+      "tidak_lagi": "not current",
+      "tidak_diketahui": "No Info"
+    };
+
+    const mlData = {
+      gender: healthRecord.gender === "Laki-Laki" ? "Male" : "Female",
+      age: parseInt(healthRecord.age),
+      hypertension: healthRecord.hypertension ? 1 : 0,
+      heart_disease: healthRecord.heart_disease ? 1 : 0,
+      bmi: parseFloat(healthRecord.bmi),
+      HbA1c_level: parseFloat(healthRecord.hba1c_level),
+      blood_glucose_level: parseInt(healthRecord.blood_glucose_level),
+      smoking_history: smokingHistoryMap[healthRecord.smoking_history] || "never"
+    };
+
+    console.log('Calling Cluster ML API with data:', mlData);
+
+    const response = await axios.post(BASE_URL_MODEL_AZERIF + '/predict', mlData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 30000
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Cluster ML API call failed:', error.message);
+    console.error('Error response:', error.response?.data);
+    throw new Error('Failed to get cluster prediction from ML model: ' + error.message);
+  }
+};
+
+// Function untuk mapping cluster number ke cluster name
+const getClusterName = (clusterNumber) => {
+  const clusterNames = {
+    0: 'Lansia Berisiko Tinggi',
+    1: 'Dewasa Sehat Rendah Risiko',
+    2: 'Anak dan Remaja Sehat',
+    3: 'Dewasa Muda Risiko Glukosa Tinggi'
+  };
+  return clusterNames[clusterNumber] || 'Kategori Tidak Diketahui';
+};
+
+// Helper function untuk memanggil kedua model ML dengan fallback
+const callBothMLPredictions = async (healthRecord) => {
+  let diabetesResult = null;
+  let clusterResult = null;
+  
+  try {
+    diabetesResult = await callMLDiabetesPrediction(healthRecord);
+    console.log('Diabetes prediction successful:', diabetesResult);
+  } catch (diabetesError) {
+    console.error('Diabetes prediction failed:', diabetesError.message);
+    throw diabetesError;
+  }
+
+  try {
+    clusterResult = await callMLClusterPrediction(healthRecord);
+    console.log('Cluster prediction successful:', clusterResult);
+  } catch (clusterError) {
+    console.error('Cluster prediction failed, using fallback:', clusterError.message);
+    clusterResult = {
+      predicted_cluster: 0,
+      cluster_name: 'Lansia Berisiko Tinggi',
+      confidence: 0.5,
+      explanation: "Cluster prediction unavailable, using default value"
+    };
+  }
+
+  return {
+    diabetes: diabetesResult,
+    cluster: clusterResult
+  };
+};
 
 class PredictionController {
   async getAllPredictions(req, res) {
@@ -35,7 +156,6 @@ class PredictionController {
         });
       }
       
-      // Check if prediction belongs to user
       if (prediction.user_id !== req.user.userId) {
         return res.status(403).json({ 
           success: false, 
@@ -62,7 +182,6 @@ class PredictionController {
       const userId = req.user.userId;
       const { health_record_id } = req.body;
       
-      // Get health record
       const healthRecord = await HealthRecordModel.getById(health_record_id);
       if (!healthRecord) {
         return res.status(404).json({ 
@@ -71,54 +190,87 @@ class PredictionController {
         });
       }
       
-      // Check if health record belongs to user
       if (healthRecord.user_id !== userId) {
         return res.status(403).json({ 
           success: false, 
           message: 'Unauthorized to use this health record' 
         });
       }
+      
+      // Call kedua ML prediction API dengan data health record user
+      let mlResults;
+      try {
+        mlResults = await callBothMLPredictions(healthRecord);
+        console.log('ML prediction results:', mlResults);
+      } catch (mlError) {
+        console.error('ML predictions failed:', mlError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to get diabetes prediction from ML model',
+          error: mlError.message
+        });
+      }
 
-      // Validate required fields for prediction
-      const requiredFields = ['age', 'hypertension', 'heart_disease', 'bmi', 'hba1c_level', 'blood_glucose_level', 'gender', 'smoking_history'];
-      for (const field of requiredFields) {
-        if (healthRecord[field] === undefined || healthRecord[field] === null) {
-          return res.status(400).json({
-            success: false,
-            message: `Missing required field for prediction: ${field}`
-          });
+      // Process ML diabetes result untuk mendapatkan persentase diabetes dan risk status
+      let diabetesPercentage;
+      let riskStatus;
+
+      if (mlResults.diabetes.probabilities && mlResults.diabetes.probabilities.diabetes !== undefined) {
+        diabetesPercentage = mlResults.diabetes.probabilities.diabetes;
+      } else if (mlResults.diabetes.predicted_class !== undefined) {
+        diabetesPercentage = mlResults.diabetes.predicted_class === 1 ? 0.8 : 0.2;
+      } else {
+        diabetesPercentage = 0.5;
+      }
+
+      const diabetesPercentageValue = parseFloat((diabetesPercentage * 100).toFixed(3));
+
+      if (diabetesPercentageValue >= 70) {
+        riskStatus = 'tinggi';
+      } else if (diabetesPercentageValue >= 40) {
+        riskStatus = 'sedang';
+      } else {
+        riskStatus = 'rendah';
+      }
+
+      // Extract cluster information dari response API
+      let clusterNumber = 0;
+      let clusterName = 'Lansia Berisiko Tinggi';
+      
+      if (mlResults.cluster) {
+        if (mlResults.cluster.predicted_cluster !== undefined) {
+          clusterNumber = mlResults.cluster.predicted_cluster;
+        }
+        
+        if (mlResults.cluster.cluster_name && mlResults.cluster.cluster_name !== 'string') {
+          clusterName = mlResults.cluster.cluster_name;
+        } else {
+          clusterName = getClusterName(clusterNumber);
         }
       }
-      
-      // Run cluster prediction using rule-based logic
-      console.log('🔄 Running cluster prediction...');
-      const predictionResult = await predictCluster(healthRecord);
-      
-      // Create prediction record - HANYA simpan cluster, kosongkan diabetes info
+
+      const now = new Date();
+      const localISOTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+
+      // Create prediction record dengan hasil kedua ML model
       const prediction = await PredictionModel.create({
         user_id: userId,
         health_record_id,
-        diabetes_percentage: null, // Akan diisi oleh model diabetes terpisah
-        risk_status: null, // Akan diisi oleh model diabetes terpisah
-        cluster: getClusterName(predictionResult.predicted_cluster),
-        created_at: new Date()
+        diabetes_percentage: diabetesPercentageValue,
+        risk_status: riskStatus,
+        cluster: clusterName,
+        created_at: localISOTime
       });
       
       res.status(201).json({
         success: true,
-        message: 'Cluster prediction created successfully',
         data: {
           ...prediction,
-          cluster_info: {
-            predicted_cluster: predictionResult.predicted_cluster,
-            confidence: predictionResult.confidence,
-            cluster_name: getClusterName(predictionResult.predicted_cluster),
-            cluster_description: getClusterDescription(predictionResult.predicted_cluster),
-            risk_score: predictionResult.risk_score
-          }
+          cluster_number: clusterNumber,
+          cluster_confidence: mlResults.cluster?.confidence ? parseFloat(mlResults.cluster.confidence.toFixed(3)) : 0.5,
+          ml_results: mlResults
         }
       });
-      
     } catch (error) {
       console.error('Create prediction error:', error);
       res.status(500).json({ 
@@ -129,96 +281,42 @@ class PredictionController {
     }
   }
 
-  // Enhanced direct cluster prediction
-  async predictClusterDirect(req, res) {
+  async deletePrediction(req, res) {
     try {
-      const inputData = req.body;
+      const predictionId = req.params.id;
+      const userId = req.user.userId;
       
-      // Validate required fields
-      const requiredFields = ['age', 'hypertension', 'heart_disease', 'bmi', 'hba1c_level', 'blood_glucose_level', 'gender', 'smoking_history'];
-      for (const field of requiredFields) {
-        if (inputData[field] === undefined || inputData[field] === null) {
-          return res.status(400).json({
-            success: false,
-            message: `Missing required field: ${field}`
-          });
-        }
+      const prediction = await PredictionModel.getById(predictionId);
+      
+      if (!prediction) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Prediction not found' 
+        });
       }
       
-      console.log('🔍 Direct cluster prediction for data:', inputData);
+      if (prediction.user_id !== userId) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'Unauthorized to delete this prediction' 
+        });
+      }
       
-      // Run prediction
-      const result = await predictCluster(inputData);
+      await PredictionModel.delete(predictionId);
       
-      res.json({
+      res.status(200).json({
         success: true,
-        message: 'Cluster prediction successful',
-        data: {
-          predicted_cluster: result.predicted_cluster,
-          cluster_name: getClusterName(result.predicted_cluster),
-          cluster_description: getClusterDescription(result.predicted_cluster),
-          confidence: result.confidence,
-          probabilities: result.probabilities,
-          risk_score: result.risk_score,
-          note: "Untuk prediksi diabetes, gunakan model terpisah"
-        }
+        message: 'Prediction deleted successfully'
       });
-
     } catch (error) {
-      console.error('❌ Direct cluster prediction error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Cluster prediction failed',
+      console.error('Delete prediction error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to delete prediction',
         error: error.message
       });
     }
   }
-
-  // Health check untuk prediction service
-  async healthCheck(req, res) {
-    try {
-      const { getModelInfo } = require('../services/clusterPredictor');
-      const modelInfo = getModelInfo();
-      
-      res.json({
-        success: true,
-        message: 'Cluster prediction service is running',
-        timestamp: new Date().toISOString(),
-        model_status: 'mock_mode',
-        model_info: modelInfo
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Prediction service health check failed',
-        error: error.message
-      });
-    }
-  }
-}
-
-// Updated Helper function untuk nama cluster berdasarkan analisis
-function getClusterName(clusterIndex) {
-  const clusterNames = {
-    0: 'Lansia Berisiko Tinggi',
-    1: 'Dewasa Sehat Rendah Risiko',
-    2: 'Anak dan Remaja Sehat',
-    3: 'Dewasa Muda Risiko Glukosa Tinggi'
-  };
-  
-  return clusterNames[clusterIndex] || `Cluster ${clusterIndex}`;
-}
-
-// New Helper function untuk deskripsi cluster
-function getClusterDescription(clusterIndex) {
-  const clusterDescriptions = {
-    0: 'Individu lansia (rata-rata usia 60 tahun) dengan prevalensi hipertensi dan penyakit jantung yang cukup tinggi. BMI mendekati obesitas dengan HbA1c dan glukosa darah tinggi, mengindikasikan risiko diabetes dan komplikasi metabolik.',
-    1: 'Individu dewasa (rata-rata 48 tahun) dengan kondisi metabolik yang sangat sehat. BMI normal, HbA1c dan glukosa darah rendah, prevalensi hipertensi dan penyakit jantung sangat rendah.',
-    2: 'Populasi anak-anak dan remaja (rata-rata usia 11 tahun) dengan BMI terendah dan hampir nol kasus hipertensi atau penyakit jantung. Mencerminkan kelompok dengan risiko metabolik terendah.',
-    3: 'Dewasa muda (rata-rata usia 32.8 tahun) dengan HbA1c dan glukosa darah tinggi meskipun prevalensi hipertensi dan penyakit jantung rendah. BMI pada batas atas normal dengan risiko prediabetes.'
-  };
-  
-  return clusterDescriptions[clusterIndex] || `Deskripsi untuk cluster ${clusterIndex} tidak tersedia`;
 }
 
 module.exports = new PredictionController();

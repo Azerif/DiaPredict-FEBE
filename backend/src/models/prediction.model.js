@@ -35,6 +35,17 @@ class PredictionModel {
     if (error) throw error;
     return data[0];
   }
+
+  async delete(id) {
+    const { data, error } = await supabase
+      .from('predictions')
+      .delete()
+      .eq('id', id)
+      .select();
+    
+    if (error) throw error;
+    return data[0];
+  }
 }
 
 module.exports = new PredictionModel();

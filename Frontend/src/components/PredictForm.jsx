@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Stepper from "../components/stepper";
 import PredictResult from "./PredictResult";
 import { confirmAlert } from "../lib/alerts";
+import { createHealthRecord } from "../api/healthRecord";
+import { createPrediction } from "../api/prediction";
 
 export default function PredictForm() {
   const [jekel, setJekel] = useState("Laki-Laki");
@@ -17,6 +19,8 @@ export default function PredictForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [bmi, setBmi] = useState(0);
   const [umur, setUmur] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [predictionResult, setPredictionResult] = useState(null);
 
   useEffect(() => {
     if (tinggi && berat) {
@@ -44,6 +48,24 @@ export default function PredictForm() {
     }
   }, [date]);
 
+  // Fungsi untuk mengonversi data form ke format health record
+  const convertToHealthRecordFormat = () => {
+    return {
+      name: "User Health Record",
+      age: parseInt(umur),
+      height: parseFloat(tinggi),
+      weight: parseFloat(berat),
+      bmi: parseFloat(bmi),
+      gender: jekel,
+      birth_date: date,
+      hypertension: selectedHipertensi === "ya",
+      heart_disease: selectedJantung === "ya",
+      smoking_history: merokok,
+      hba1c_level: parseFloat(hemoglobin),
+      blood_glucose_level: parseInt(gulaDarah),
+    };
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setCurrentStep(1);
@@ -51,27 +73,50 @@ export default function PredictForm() {
 
   const handleSubmitStep2 = async (e) => {
     e.preventDefault();
-    console.log({
-      jekel,
-      tinggi,
-      berat,
-      date,
-      selectedHipertensi,
-      selectedJantung,
-      merokok,
-      hemoglobin,
-      gulaDarah,
-      bmi,
-      umur,
-    });
-    await confirmAlert("Apakah anda yakin data yang di isi sudah benar?").then(
-      (result) => {
-        if (result.isConfirmed) {
-          setIsSubmitted(true);
-        }
-      }
+
+    const result = await confirmAlert(
+      "Apakah anda yakin data yang di isi sudah benar?"
     );
+
+    if (result.isConfirmed) {
+      setIsLoading(true);
+
+      try {
+        // 1. Buat health record baru
+        const healthRecordData = convertToHealthRecordFormat();
+        const healthRecordResponse = await createHealthRecord(healthRecordData);
+
+        console.log("Health record created:", healthRecordResponse);
+
+        // 2. Backend akan otomatis memanggil kedua ML model (diabetes + cluster) dan menyimpan prediksi
+        const predictionData = {
+          health_record_id: healthRecordResponse.data.id,
+        };
+
+        const savedPrediction = await createPrediction(predictionData);
+        console.log("Prediction saved to database:", savedPrediction);
+
+        // 3. Tampilkan hasil dari backend (sudah termasuk hasil kedua ML model)
+        setPredictionResult({
+          diabetes_percentage: savedPrediction.data.diabetes_percentage,
+          risk_status: savedPrediction.data.risk_status,
+          cluster: savedPrediction.data.cluster,
+          diabetes_result: savedPrediction.data.ml_results?.diabetes,
+          cluster_result: savedPrediction.data.ml_results?.cluster,
+          database_id: savedPrediction.data.id,
+          health_record_id: healthRecordResponse.data.id
+        });
+        setIsSubmitted(true);
+
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat memproses data. Silakan coba lagi.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
+
   const handleReset = () => {
     setJekel("Laki-Laki");
     setTinggi("");
@@ -86,6 +131,7 @@ export default function PredictForm() {
     setUmur();
     setCurrentStep(0);
     setIsSubmitted(false);
+    setPredictionResult(null);
   };
 
   return (
@@ -336,9 +382,11 @@ export default function PredictForm() {
                         className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-gray-500 focus:outline-none bg-white text-sm"
                         required
                       >
-                        <option value="tidak">Tidak Merokok</option>
+                        <option value="tidak">Tidak Pernah Merokok</option>
                         <option value="mantan">Mantan Perokok</option>
                         <option value="aktif">Perokok Aktif</option>
+                        <option value="tidak_lagi">Tidak Lagi Merokok</option>
+                        <option value="tidak_diketahui">Tidak Diketahui</option>
                       </select>
                     </div>
 
@@ -405,19 +453,46 @@ export default function PredictForm() {
                     </button>
                     <button
                       type="submit"
-                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium text-sm"
+                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      disabled={isLoading}
                     >
-                      Prediksi Risiko Diabetes
+                      {isLoading && (
+                        <svg
+                          className="animate-spin h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      )}
+                      {isLoading ? "Memproses..." : "Prediksi Risiko Diabetes & Cluster"}
                     </button>
                   </div>
                 </form>
               )}
             </>
           )}{" "}
-          {isSubmitted && (
+          {isSubmitted && predictionResult && (
             <div className="flex items-center justify-center">
               <div className="w-full">
-                <PredictResult RiskValue={58} onReset={handleReset} />
+                <PredictResult
+                  RiskValue={predictionResult.diabetes_percentage || 50}
+                  predictionData={predictionResult}
+                  onReset={handleReset}
+                />
               </div>
             </div>
           )}
