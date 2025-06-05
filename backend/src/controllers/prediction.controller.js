@@ -96,27 +96,34 @@ const callBothMLPredictions = async (healthRecord) => {
   let diabetesResult = null;
   let clusterResult = null;
   
+  // Add unique request ID untuk tracking
+  const requestId = Math.random().toString(36).substring(7);
+  console.log(`[${requestId}] Starting ML predictions for user`);
+  
   try {
+    console.log(`[${requestId}] Calling diabetes prediction...`);
     diabetesResult = await callMLDiabetesPrediction(healthRecord);
-    console.log('Diabetes prediction successful:', diabetesResult);
+    console.log(`[${requestId}] Diabetes prediction successful`);
   } catch (diabetesError) {
-    console.error('Diabetes prediction failed:', diabetesError.message);
+    console.error(`[${requestId}] Diabetes prediction failed:`, diabetesError.message);
     throw diabetesError;
   }
 
   try {
+    console.log(`[${requestId}] Calling cluster prediction...`);
     clusterResult = await callMLClusterPrediction(healthRecord);
-    console.log('Cluster prediction successful:', clusterResult);
+    console.log(`[${requestId}] Cluster prediction successful`);
   } catch (clusterError) {
-    console.error('Cluster prediction failed, using fallback:', clusterError.message);
+    console.error(`[${requestId}] Cluster prediction failed, using fallback:`, clusterError.message);
     clusterResult = {
       predicted_cluster: 0,
-      cluster_name: 'Dewasa/Lansia dengan Potensi Risiko Kesehatan', // Updated fallback name
+      cluster_name: 'Dewasa/Lansia dengan Potensi Risiko Kesehatan',
       confidence: 0.5,
       explanation: "Cluster prediction unavailable, using default value"
     };
   }
 
+  console.log(`[${requestId}] Both ML predictions completed`);
   return {
     diabetes: diabetesResult,
     cluster: clusterResult
