@@ -36,7 +36,7 @@ const FaqSection = () => {
   };
 
   return (
-    <section className="max-w-[350px] intersect:motion-preset-slide-up motion-delay-500 mx-auto sm:max-w-[600px] md:max-w-[1200px] space-y-4 mb-20 py-10">
+    <section className="max-w-[350px] intersect:motion-preset-bounce motion-delay-500 mx-auto sm:max-w-[600px] md:max-w-[1200px] space-y-4 mb-20 py-10">
       <h2 className="text-4xl font-bold text-[#00B7E0] text-center mb-10">
         FAQ
       </h2>
@@ -44,7 +44,7 @@ const FaqSection = () => {
         <div key={index} className="bg-[#CCF1F9] rounded-md">
           <button
             onClick={() => toggle(index)}
-            className="w-full flex items-center justify-between gap-1.5 rounded-md border border-gray-100 bg-[#00B7E0] p-4 text-left text-gray-900"
+            className="w-full flex items-center justify-between gap-1.5 rounded-md border border-gray-100 bg-[#00B7E0] p-4 text-left text-gray-900 "
           >
             <h2 className="text-xl font-medium">{faq.question}</h2>
             <svg
@@ -64,9 +64,13 @@ const FaqSection = () => {
               />
             </svg>
           </button>
-          {activeIndex === index && (
-            <div className="text-xl px-4 py-6">{faq.answer}</div>
-          )}
+          <div
+            className={`overflow-hidden transition-all duration-300 ${
+              activeIndex === index ? "max-h-40 py-4 px-4" : "max-h-0 py-0 px-4"
+            }`}
+          >
+            <p className="text-gray-800">{faq.answer}</p>
+          </div>
         </div>
       ))}
     </section>

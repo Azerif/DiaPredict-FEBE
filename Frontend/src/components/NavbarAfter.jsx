@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext';
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 
 const NavbarAfter = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,16 +16,15 @@ const NavbarAfter = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const handleLogout = async () => {
-    localStorage.removeItem('token');
-    await clearUser();  
+    localStorage.removeItem("token");
+    await clearUser();
     setDropdownOpen(false);
-    navigate('/register');
+    navigate("/");
   };
-
 
   const NavLink = ({ to, children }) => (
     <Link
@@ -54,9 +53,15 @@ const NavbarAfter = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:block">
           <ul className="flex gap-4 text-lg font-medium">
-            <li><NavLink to="/home">Home</NavLink></li>
-            <li><NavLink to="/histori">Histori</NavLink></li>
-            <li><NavLink to="/education">Artikel</NavLink></li>
+            <li>
+              <NavLink to="/home">Home</NavLink>
+            </li>
+            <li>
+              <NavLink to="/histori">Histori</NavLink>
+            </li>
+            <li>
+              <NavLink to="/education">Artikel</NavLink>
+            </li>
           </ul>
         </nav>
 
@@ -77,14 +82,30 @@ const NavbarAfter = () => {
                   alt={user.name}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/assets/default-user-icon.png';
+                    e.target.src = "/assets/default-user-icon.png";
                   }}
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1119 12a9 9 0 01-13.879 5.804z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5.121 17.804A9 9 0 1119 12a9 9 0 01-13.879 5.804z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
                 </div>
               )}
@@ -96,7 +117,7 @@ const NavbarAfter = () => {
                 <div className="h-4 bg-gray-200 rounded w-full"></div>
               ) : (
                 <p className="font-medium text-base hover:text-[#00B7E0] truncate w-full">
-                  {user.name || 'User'}
+                  {user.name || "User"}
                 </p>
               )}
             </div>
@@ -134,7 +155,9 @@ const NavbarAfter = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden mt-4 overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+        className={`md:hidden mt-4 overflow-hidden transition-all duration-500 ease-in-out ${
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
       >
         <ul className="flex flex-col gap-2 text-lg font-medium items-center">
           <li className="w-12 h-12 flex justify-center items-center">
@@ -142,20 +165,46 @@ const NavbarAfter = () => {
               {isLoading ? (
                 <div className="w-12 h-12 rounded-full bg-gray-200"></div>
               ) : user.image ? (
-                <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A9 9 0 1119 12a9 9 0 01-13.879 5.804z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-7 h-7"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5.121 17.804A9 9 0 1119 12a9 9 0 01-13.879 5.804z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
                 </div>
               )}
             </Link>
           </li>
-          <li><NavLink to="/home">Home</NavLink></li>
-          <li><NavLink to="/histori">Histori</NavLink></li>
-          <li><NavLink to="/education">Artikel</NavLink></li>
+          <li>
+            <NavLink to="/home">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="/histori">Histori</NavLink>
+          </li>
+          <li>
+            <NavLink to="/education">Artikel</NavLink>
+          </li>
         </ul>
         <button
           onClick={handleLogout}
