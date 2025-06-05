@@ -21,25 +21,43 @@ export default function PredictResult({ RiskValue, predictionData, onReset }) {
     borderColor = "border-yellow-200";
     progressColor = "#d97706";
   }
-
   // Function untuk menjelaskan cluster berdasarkan nama
   const getClusterExplanation = (clusterName) => {
     const clusterExplanations = {
-      'Lansia Berisiko Tinggi': "Kelompok usia lanjut dengan faktor risiko tinggi diabetes. Perlu pemantauan kesehatan secara rutin dan konsultasi medis berkala.",
-      'Dewasa Sehat Rendah Risiko': "Kelompok dewasa dengan profil kesehatan baik dan risiko diabetes rendah. Pertahankan gaya hidup sehat.",
-      'Anak dan Remaja Sehat': "Kelompok usia muda dengan kondisi kesehatan baik. Fokus pada pola makan sehat dan aktivitas fisik teratur.",
-      'Dewasa Muda Risiko Glukosa Tinggi': "Kelompok dewasa muda dengan kadar glukosa tinggi. Perlu perhatian khusus pada pola makan dan pemeriksaan rutin."
+      'Dewasa/Lansia dengan Potensi Risiko Kesehatan': "Kelompok dewasa/lansia yang memiliki potensi risiko kesehatan. Disarankan untuk melakukan pemeriksaan kesehatan rutin, menjaga pola makan seimbang, dan konsultasi dengan dokter secara berkala untuk pencegahan dini.",
+      'Dewasa Muda/Paruh Baya dengan Kesehatan Relatif Baik': "Kelompok dewasa muda hingga paruh baya dengan kondisi kesehatan yang relatif baik. Pertahankan gaya hidup sehat dengan olahraga teratur, pola makan bergizi, dan cek kesehatan berkala.",
+      'Anak-anak/Remaja Sehat': "Kelompok anak-anak dan remaja dengan kondisi kesehatan yang baik. Fokus pada pola makan bergizi seimbang, aktivitas fisik yang cukup, dan kebiasaan hidup sehat sejak dini.",
+      'Dewasa Muda dengan Perhatian pada Gula Darah': "Kelompok dewasa muda yang perlu memberikan perhatian khusus pada kadar gula darah. Disarankan untuk mengatur pola makan, mengurangi konsumsi gula berlebih, dan melakukan pemeriksaan gula darah secara rutin."
     };
     return clusterExplanations[clusterName] || "Kategori kesehatan yang memerlukan evaluasi lebih lanjut.";
   };
-
   // Function untuk mendapatkan warna berdasarkan cluster
   const getClusterColor = (clusterName) => {
     const clusterColors = {
-      'Lansia Berisiko Tinggi': { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', circle: 'bg-red-500' },
-      'Dewasa Sehat Rendah Risiko': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', circle: 'bg-green-500' },
-      'Anak dan Remaja Sehat': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', circle: 'bg-blue-500' },
-      'Dewasa Muda Risiko Glukosa Tinggi': { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', circle: 'bg-orange-500' }
+      'Dewasa/Lansia dengan Potensi Risiko Kesehatan': { 
+        bg: 'bg-red-50', 
+        border: 'border-red-200', 
+        text: 'text-red-700', 
+        circle: 'bg-red-500' 
+      },
+      'Dewasa Muda/Paruh Baya dengan Kesehatan Relatif Baik': { 
+        bg: 'bg-green-50', 
+        border: 'border-green-200', 
+        text: 'text-green-700', 
+        circle: 'bg-green-500' 
+      },
+      'Anak-anak/Remaja Sehat': { 
+        bg: 'bg-blue-50', 
+        border: 'border-blue-200', 
+        text: 'text-blue-700', 
+        circle: 'bg-blue-500' 
+      },
+      'Dewasa Muda dengan Perhatian pada Gula Darah': { 
+        bg: 'bg-orange-50', 
+        border: 'border-orange-200', 
+        text: 'text-orange-700', 
+        circle: 'bg-orange-500' 
+      }
     };
     return clusterColors[clusterName] || { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700', circle: 'bg-gray-500' };
   };
