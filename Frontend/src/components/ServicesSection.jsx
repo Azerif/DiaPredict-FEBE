@@ -4,7 +4,7 @@ const ServicesSection = ({ id }) => {
   return (
     <section
       id={id}
-      className="max-w-[350px] mx-auto sm:max-w-[550px] md:max-w-[1200px] mb-30 bg-[#CCF1F9] py-10 px-10 md:px-8 text-center shadow-xl rounded-xl"
+      className="max-w-[350px] mx-auto sm:max-w-[550px] md:max-w-[1200px] mb-30 bg-[#CCF1F9] py-10 px-10 md:px-8 text-center shadow-xl rounded-xl scroll-mt-20"
     >
       <h2 className="text-4xl font-bold text-[#00B7E0] text-center mb-20 intersect:motion-preset-slide-down motion-delay-300">
         Layanan Kami

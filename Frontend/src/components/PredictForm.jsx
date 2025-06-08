@@ -6,7 +6,7 @@ import { createHealthRecord } from "../api/healthRecord";
 import { createPrediction } from "../api/prediction";
 
 export default function PredictForm() {
-  const [jekel, setJekel] = useState("Laki-Laki");
+  const [jekel, setJekel] = useState("Male");
   const [tinggi, setTinggi] = useState("");
   const [berat, setBerat] = useState("");
   const [date, setDate] = useState("");
@@ -104,10 +104,9 @@ export default function PredictForm() {
           diabetes_result: savedPrediction.data.ml_results?.diabetes,
           cluster_result: savedPrediction.data.ml_results?.cluster,
           database_id: savedPrediction.data.id,
-          health_record_id: healthRecordResponse.data.id
+          health_record_id: healthRecordResponse.data.id,
         });
         setIsSubmitted(true);
-
       } catch (error) {
         console.error("Error:", error);
         alert("Terjadi kesalahan saat memproses data. Silakan coba lagi.");
@@ -118,7 +117,7 @@ export default function PredictForm() {
   };
 
   const handleReset = () => {
-    setJekel("Laki-Laki");
+    setJekel("Male");
     setTinggi("");
     setBerat("");
     setDate("");
@@ -174,7 +173,7 @@ export default function PredictForm() {
                       Jenis Kelamin
                     </label>
                     <div className="grid grid-cols-2 gap-3">
-                      {["Laki-Laki", "Perempuan"].map((gender) => (
+                      {["Male", "Female"].map((gender) => (
                         <div key={gender}>
                           <input
                             type="radio"
@@ -478,7 +477,9 @@ export default function PredictForm() {
                           ></path>
                         </svg>
                       )}
-                      {isLoading ? "Memproses..." : "Prediksi Risiko Diabetes & Cluster"}
+                      {isLoading
+                        ? "Memproses..."
+                        : "Prediksi Risiko Diabetes & Cluster"}
                     </button>
                   </div>
                 </form>

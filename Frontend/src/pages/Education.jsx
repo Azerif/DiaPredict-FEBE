@@ -2,6 +2,7 @@ import TabInterfaces from "../components/tabbedInterfaces";
 import Footer from "../components/Footer";
 import NavbarAfter from "../components/NavbarAfter";
 import ObserverProvider from "../lib/ObserverProvider";
+import { motion } from "framer-motion";
 
 export default function Education() {
   return (
@@ -16,30 +17,46 @@ export default function Education() {
               <h1 className="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-6">
                 Mengenal Diabetes: Penyebab, Gejala, dan Cara Pencegahannya
               </h1>
-              <div className="bg-white rounded-lg shadow-lg p-6 mx-auto max-w-3xl intersect:motion-preset-slide-up motion-delay-100">
+              <motion.div
+                exit={{ y: "10%", opacity: 0 }}
+                transition={{ delay: 0.5 }}
+                className="bg-white rounded-lg shadow-lg p-6 mx-auto max-w-3xl intersect:motion-preset-slide-up motion-delay-100"
+              >
                 <h2 className="text-xl text-center font-bold text-[#00B7E0] mb-4">
                   Apa itu Diabetes?
                 </h2>
-                <p className="text-center text-base text-gray-700 leading-relaxed intersect:motion-preset-slide-up motion-delay-200">
+                <motion.p
+                  exit={{ y: "10%", opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-center text-base text-gray-700 leading-relaxed intersect:motion-preset-slide-up motion-delay-200"
+                >
                   Diabetes adalah penyakit kronis yang terjadi ketika tubuh
                   tidak dapat menghasilkan insulin secara cukup atau tidak mampu
                   menggunakan insulin secara efektif. Insulin adalah hormon yang
                   mengatur kadar gula (glukosa) dalam darah. Tanpa insulin yang
                   cukup, glukosa menumpuk dalam darah dan menyebabkan berbagai
                   komplikasi kesehatan.
-                </p>
-              </div>
+                </motion.p>
+              </motion.div>
             </div>
           </section>{" "}
           {/* Jenis Diabetes Section */}
-          <section className="hidden sm:block py-8 intersect:motion-preset-slide-up motion-delay-300">
+          <motion.section
+            exit={{ y: "10%", opacity: 0 }}
+            transition={{ delay: 0.8 }}
+            className="hidden sm:block py-8 intersect:motion-preset-slide-up motion-delay-300"
+          >
             <div className="max-w-4xl mx-auto px-4">
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h2 className="text-xl font-bold text-[#00B7E0] mb-6 text-center">
                   Jenis - Jenis Diabetes
                 </h2>
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border-l-4 border-[#00B7E0] intersect:motion-preset-slide-up motion-delay-400">
+                  <motion.div
+                    exit={{ y: "10%", opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border-l-4 border-[#00B7E0] intersect:motion-preset-slide-up motion-delay-400"
+                  >
                     <div className="flex items-center mb-3">
                       <div className="bg-[#00B7E0] text-white rounded-full w-6 h-6 flex items-center justify-center font-bold mr-2 text-sm">
                         1
@@ -54,9 +71,13 @@ export default function Education() {
                       anak-anak dan remaja. Penderita harus menggunakan insulin
                       sepanjang hidup.
                     </p>
-                  </div>
+                  </motion.div>
 
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border-l-4 border-green-500 intersect:motion-preset-slide-up motion-delay-600">
+                  <motion.div
+                    exit={{ y: "10%", opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border-l-4 border-green-500 intersect:motion-preset-slide-up motion-delay-600"
+                  >
                     <div className="flex items-center mb-3">
                       <div className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold mr-2 text-sm">
                         2
@@ -71,9 +92,13 @@ export default function Education() {
                       Umumnya dipicu oleh gaya hidup tidak sehat seperti pola
                       makan buruk dan kurang aktivitas fisik.
                     </p>
-                  </div>
+                  </motion.div>
 
-                  <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-lg border-l-4 border-pink-500 intersect:motion-preset-slide-up motion-delay-800">
+                  <motion.div
+                    exit={{ y: "10%", opacity: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-lg border-l-4 border-pink-500 intersect:motion-preset-slide-up motion-delay-800"
+                  >
                     <div className="flex items-center mb-3">
                       <div className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold mr-2 text-sm">
                         3
@@ -88,17 +113,21 @@ export default function Education() {
                       tetapi meningkatkan risiko diabetes tipe 2 di kemudian
                       hari.
                     </p>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
-          </section>{" "}
+          </motion.section>{" "}
           {/* Gejala & Penyebab Section */}
           <section className="hidden sm:block py-8 bg-gradient-to-r from-[#CCF1F9] to-blue-50 ">
             <div className="max-w-4xl mx-auto px-4 ">
               <div className="grid lg:grid-cols-2 gap-6">
                 {/* Gejala Diabetes */}
-                <div className="bg-white rounded-lg shadow-lg p-6 intersect:motion-preset-slide-right motion-delay-200">
+                <motion.div
+                  exit={{ x: "-30%", opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="bg-white rounded-lg shadow-lg p-6 intersect:motion-preset-slide-right motion-delay-200"
+                >
                   <div className="flex items-center mb-4">
                     <div className="bg-red-500 p-2 rounded-full mr-3">
                       <svg
@@ -140,10 +169,14 @@ export default function Education() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
 
                 {/* Penyebab & Faktor Risiko */}
-                <div className="bg-white rounded-lg shadow-lg p-6 intersect:motion-preset-slide-left motion-delay-200">
+                <motion.div
+                  exit={{ x: "30%", opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="bg-white rounded-lg shadow-lg p-6 intersect:motion-preset-slide-left motion-delay-200"
+                >
                   <div className="flex items-center mb-4">
                     <div className="bg-orange-500 p-2 rounded-full mr-3">
                       <svg
@@ -185,7 +218,7 @@ export default function Education() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               </div>
             </div>
           </section>
@@ -256,7 +289,9 @@ export default function Education() {
                         "Pastikan tidur berkualitas 7-8 jam setiap malam",
                     },
                   ].map((item, index) => (
-                    <div
+                    <motion.div
+                      exit={{ y: "10%", opacity: 0 }}
+                      transition={{ duration: 0.8 }}
                       key={index}
                       className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200 hover:shadow-md transition-shadow intersect:motion-preset-slide-down motion-delay-400"
                     >
@@ -267,7 +302,7 @@ export default function Education() {
                       <p className="text-gray-600 text-sm">
                         {item.description}
                       </p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>

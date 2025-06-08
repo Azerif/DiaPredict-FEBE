@@ -3,12 +3,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Navigation} from "swiper/modules";
-
+import { Navigation } from "swiper/modules";
 import HeroHome from "../components/HeroHome";
 import PredictForm from "../components/PredictForm";
 import Footer from "../components/Footer";
 import NavbarAfter from "../components/NavbarAfter";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const swiperRef = useRef(null);

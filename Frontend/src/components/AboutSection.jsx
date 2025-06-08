@@ -4,7 +4,7 @@ const AboutSection = ({ id }) => {
   return (
     <section
       id={id}
-      className="max-w-[1200px] mx-auto mb-30 pt-10 intersect:motion-preset-slide-down motion-delay-200"
+      className="max-w-[1200px] mx-auto mb-30 pt-10 intersect:motion-preset-slide-down motion-delay-200 scroll-mt-20"
     >
       <h2 className="text-4xl font-bold text-[#00B7E0] text-center mb-10">
         Tentang Kami

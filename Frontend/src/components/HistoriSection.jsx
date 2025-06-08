@@ -35,6 +35,7 @@ export default function HistoriSection() {
     try {
       setLoading(true);
       const response = await getAllPredictions();
+      console.log(response);
       setPredictions(response.data || []);
       setError(null);
     } catch (error) {
@@ -65,40 +66,47 @@ export default function HistoriSection() {
     });
   };
 
-  const getMonthName = (dateString) => {
+  const formatDay = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("id-ID", { month: "long" });
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+    });
   };
 
-  // Grouping predictions berdasarkan tanggal
-  const groupPredictionsByDate = (predictions) => {
+  const getMonthYear = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  };
+
+  // Grouping predictions berdasarkan bulan
+  const groupPredictionsByMonth = (predictions) => {
     const grouped = {};
 
     predictions.forEach((prediction) => {
       const date = new Date(prediction.created_at);
-      const dateKey = date.toDateString();
+      const monthYear = getMonthYear(prediction.created_at);
 
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = {
-          bulan: getMonthName(prediction.created_at),
-          date: formatDate(prediction.created_at),
+      if (!grouped[monthYear]) {
+        grouped[monthYear] = {
+          bulan: monthYear,
           items: [],
         };
       }
 
-      grouped[dateKey].items.push({
+      grouped[monthYear].items.push({
         id: prediction.id,
         time: formatTime(prediction.created_at),
+        date: formatDate(prediction.created_at),
         result: prediction.diabetes_percentage.toFixed(2),
         risk: prediction.risk_status,
         cluster: prediction.cluster,
-        created_at: prediction.created_at
+        created_at: prediction.created_at,
       });
     });
-
     // Convert object ke array dan sort berdasarkan tanggal terbaru
     return Object.values(grouped).sort(
-      (a, b) => new Date(b.items[0].created_at) - new Date(a.items[0].created_at)
+      (a, b) =>
+        new Date(b.items[0].created_at) - new Date(a.items[0].created_at)
     );
   };
 
@@ -123,9 +131,8 @@ export default function HistoriSection() {
     );
     if (result.isConfirmed) {
       try {
-
         await deletePrediction(predictionId);
-        
+
         setPredictions((prev) => prev.filter((p) => p.id !== predictionId));
         await alertSuccess("Histori ini telah dihapus");
       } catch (error) {
@@ -136,7 +143,7 @@ export default function HistoriSection() {
   };
 
   // Grouping data predictions
-  const groupedData = groupPredictionsByDate(predictions);
+  const groupedData = groupPredictionsByMonth(predictions);
 
   // Filtering data
   const filteredData = groupedData
@@ -229,7 +236,7 @@ export default function HistoriSection() {
   }
 
   return (
-    <section className="max-w-3xl mx-auto p-4 text-black mb-20 min-h-screen">
+    <section className="max-w-3xl mx-auto p-4 text-black mb-20 min-h-[500px]">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 mt-3 md:mt-5">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           Riwayat Prediksi <span>🕒</span>
@@ -268,26 +275,27 @@ export default function HistoriSection() {
           </p>
         </div>
       ) : (
-        filteredData.map((group, dateIndex) => (
-          <div key={group.date} className="mb-6">
-            <h2 className="font-semibold text-gray-700">Bulan {group.bulan}</h2>
-            <h3 className="font-semibold text-gray-700 mb-2">{group.date}</h3>
-
+        filteredData.map((group, monthIndex) => (
+          <div key={group.bulan} className="mb-6">
+            <h2 className="font-semibold text-gray-700 mb-2">
+              Bulan {group.bulan}
+            </h2>
             {group.items.map((item, itemIndex) => {
-              const isOpen = openDetailIndex[`${dateIndex}-${itemIndex}`];
+              const isOpen = openDetailIndex[`${monthIndex}-${itemIndex}`];
               return (
                 <div key={item.id} className="flex flex-col border-b py-2">
                   <div className="flex items-center justify-between">
                     <div className="flex gap-6 items-center">
-                      <span className="w-16">{item.time}</span>
+                      <span className="w-50">
+                        {item.date}, {item.time}
+                      </span>
                       <span>
                         Hasil Diabetes ➔ <strong>{item.result}%</strong>
                       </span>
                     </div>
-
                     <button
                       className="text-gray-500 hover:text-black"
-                      onClick={() => toggleDetail(dateIndex, itemIndex)}
+                      onClick={() => toggleDetail(monthIndex, itemIndex)}
                     >
                       {isOpen ? (
                         <ChevronUp size={20} />
@@ -304,9 +312,9 @@ export default function HistoriSection() {
                           <span>
                             Status risiko:{" "}
                             <span
-                              className={`${
-                                getRiskColor(item.risk)
-                              } font-semibold capitalize`}
+                              className={`${getRiskColor(
+                                item.risk
+                              )} font-semibold capitalize`}
                             >
                               {item.risk}
                             </span>
@@ -334,42 +342,38 @@ export default function HistoriSection() {
                 </div>
               );
             })}
-
-            <div className="flex gap-2">
-              <div>
-                <button
-                  className="p-2 bg-blueFigma rounded text-white text-sm mt-3"
-                  onClick={() => {
-                    const data = hitungRisikoPerBulan(group.items);
-                    setDataGrafikBar(data);
-                    setHeading("Frekuensi Risiko Bulan " + group.bulan);
-                    setModeGrafik("bar");
-                    document.getElementById("my_modal_3").showModal();
-                  }}
-                >
-                  Lihat Grafik
-                </button>
-              </div>
-              <div>
-                <button
-                  className="p-2 bg-blueFigma rounded text-white text-sm mt-3"
-                  onClick={() => {
-                    const data = [...group.items]
-                      .sort((a, b) => a.time.localeCompare(b.time))
-                      .map((item) => ({
-                        time: item.time,
-                        result: item.result,
-                      }));
-
-                    setDataGrafikLine(data);
-                    setHeading("Grafik Perkembangan Risiko Per Hari");
-                    setModeGrafik("line");
-                    document.getElementById("my_modal_3").showModal();
-                  }}
-                >
-                  Lihat Grafik Perkembangan
-                </button>
-              </div>
+            <div className="flex gap-2 mb-4 mt-4">
+              <button
+                className="p-2 bg-blueFigma rounded text-white text-sm"
+                onClick={() => {
+                  const data = hitungRisikoPerBulan(group.items);
+                  setDataGrafikBar(data);
+                  setHeading("Frekuensi Risiko Bulan " + group.bulan);
+                  setModeGrafik("bar");
+                  document.getElementById("my_modal_3").showModal();
+                }}
+              >
+                Lihat Grafik
+              </button>
+              <button
+                className="p-2 bg-blueFigma rounded text-white text-sm"
+                onClick={() => {
+                  const data = [...group.items]
+                    .sort(
+                      (a, b) => new Date(a.created_at) - new Date(b.created_at)
+                    )
+                    .map((item) => ({
+                      time: formatDay(item.created_at),
+                      result: item.result,
+                    }));
+                  setDataGrafikLine(data);
+                  setHeading("Grafik Perkembangan Risiko Per Hari");
+                  setModeGrafik("line");
+                  document.getElementById("my_modal_3").showModal();
+                }}
+              >
+                Lihat Grafik Perkembangan
+              </button>
             </div>
           </div>
         ))
