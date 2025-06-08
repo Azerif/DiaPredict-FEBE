@@ -11,8 +11,8 @@ export default function PredictForm() {
   const [berat, setBerat] = useState("");
   const [date, setDate] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedHipertensi, setSelectedHipertensi] = useState("ya");
-  const [selectedJantung, setSelectedJantung] = useState("ya");
+  const [selectedHipertensi, setSelectedHipertensi] = useState("tidak");
+  const [selectedJantung, setSelectedJantung] = useState("tidak");
   const [merokok, setMerokok] = useState("tidak");
   const [hemoglobin, setHemoglobin] = useState("");
   const [gulaDarah, setGulaDarah] = useState("");
@@ -61,8 +61,9 @@ export default function PredictForm() {
       hypertension: selectedHipertensi === "ya",
       heart_disease: selectedJantung === "ya",
       smoking_history: merokok,
-      hba1c_level: parseFloat(hemoglobin),
-      blood_glucose_level: parseInt(gulaDarah),
+      // Data medis opsional - jika kosong akan menggunakan model sederhana
+      hba1c_level: hemoglobin ? parseFloat(hemoglobin) : null,
+      blood_glucose_level: gulaDarah ? parseInt(gulaDarah) : null,
     };
   };
 
@@ -74,9 +75,17 @@ export default function PredictForm() {
   const handleSubmitStep2 = async (e) => {
     e.preventDefault();
 
-    const result = await confirmAlert(
-      "Apakah anda yakin data yang di isi sudah benar?"
-    );
+    // Cek apakah data medis tersedia
+    const hasHbA1c = hemoglobin && parseFloat(hemoglobin) > 0;
+    const hasGlucose = gulaDarah && parseInt(gulaDarah) > 0;
+    const useSimpleModel = !hasHbA1c || !hasGlucose;
+
+    let confirmMessage = "Apakah anda yakin data yang di isi sudah benar?";
+    if (useSimpleModel) {
+      confirmMessage += "\n\nCatatan: Data hemoglobin atau gula darah tidak lengkap, sistem akan menggunakan model prediksi sederhana.";
+    }
+
+    const result = await confirmAlert(confirmMessage);
 
     if (result.isConfirmed) {
       setIsLoading(true);
@@ -88,25 +97,28 @@ export default function PredictForm() {
 
         console.log("Health record created:", healthRecordResponse);
 
-        // 2. Backend akan otomatis memanggil kedua ML model (diabetes + cluster) dan menyimpan prediksi
+        // 2. Backend akan otomatis memilih model yang tepat berdasarkan ketersediaan data
         const predictionData = {
           health_record_id: healthRecordResponse.data.id,
+          use_simple_model: useSimpleModel
         };
 
         const savedPrediction = await createPrediction(predictionData);
         console.log("Prediction saved to database:", savedPrediction);
 
-        // 3. Tampilkan hasil dari backend (sudah termasuk hasil kedua ML model)
+        // 3. Tampilkan hasil dari backend
         setPredictionResult({
           diabetes_percentage: savedPrediction.data.diabetes_percentage,
           risk_status: savedPrediction.data.risk_status,
           cluster: savedPrediction.data.cluster,
           diabetes_result: savedPrediction.data.ml_results?.diabetes,
           cluster_result: savedPrediction.data.ml_results?.cluster,
+          model_used: savedPrediction.data.model_used,
           database_id: savedPrediction.data.id,
-          health_record_id: healthRecordResponse.data.id,
+          health_record_id: healthRecordResponse.data.id
         });
         setIsSubmitted(true);
+
       } catch (error) {
         console.error("Error:", error);
         alert("Terjadi kesalahan saat memproses data. Silakan coba lagi.");
@@ -121,8 +133,8 @@ export default function PredictForm() {
     setTinggi("");
     setBerat("");
     setDate("");
-    setSelectedHipertensi("ya");
-    setSelectedJantung("ya");
+    setSelectedHipertensi("tidak");
+    setSelectedJantung("tidak");
     setMerokok("tidak");
     setHemoglobin("");
     setGulaDarah("");
@@ -165,7 +177,8 @@ export default function PredictForm() {
                   Isi data kesehatan Anda untuk prediksi diabetes yang akurat
                 </p>
               </div>
-              <Stepper currentStep={currentStep} />{" "}
+              <Stepper currentStep={currentStep} />
+
               {currentStep === 0 && (
                 <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -303,7 +316,8 @@ export default function PredictForm() {
                     </button>
                   </div>
                 </form>
-              )}{" "}
+              )}
+
               {currentStep === 1 && (
                 <form className="space-y-4 mt-4" onSubmit={handleSubmitStep2}>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -345,7 +359,6 @@ export default function PredictForm() {
                       <div className="flex gap-2">
                         {["ya", "tidak"].map((val) => (
                           <div key={val} className="flex-1">
-                            {" "}
                             <input
                               type="radio"
                               id={`jantung-${val}`}
@@ -410,35 +423,83 @@ export default function PredictForm() {
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="bg-rose-50 p-4 rounded-lg border border-rose-200">
-                      <label className="block text-base font-semibold text-gray-800 mb-3">
-                        Hemoglobin (g/dL)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={hemoglobin}
-                        onChange={(e) => setHemoglobin(e.target.value)}
-                        placeholder="12.5"
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-rose-500 focus:outline-none text-sm"
-                        required
-                      />
+                  {/* Medical Data - Optional */}
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h3 className="text-base font-semibold text-gray-800 mb-3">
+                      Data Medis (Opsional)
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Data medis akan meningkatkan akurasi prediksi secara signifikan. Kosongkan jika tidak memiliki hasil laboratorium terbaru.
+                    </p>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-rose-50 p-4 rounded-lg border border-rose-200">
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">
+                          HbA1c Level (%)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={hemoglobin}
+                          onChange={(e) => setHemoglobin(e.target.value)}
+                          placeholder="Contoh: 6.5"
+                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-rose-500 focus:outline-none text-sm"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Kadar gula darah rata-rata 2-3 bulan terakhir
+                        </p>
+                      </div>
+
+                      <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">
+                          Gula Darah (mg/dL)
+                        </label>
+                        <input
+                          type="number"
+                          value={gulaDarah}
+                          onChange={(e) => setGulaDarah(e.target.value)}
+                          placeholder="Contoh: 120"
+                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-amber-500 focus:outline-none text-sm"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Kadar glukosa darah saat pemeriksaan
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-                      <label className="block text-base font-semibold text-gray-800 mb-3">
-                        Kadar Gula Darah (mg/dL)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={gulaDarah}
-                        onChange={(e) => setGulaDarah(e.target.value)}
-                        placeholder="120"
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-amber-500 focus:outline-none text-sm"
-                        required
-                      />
+                    {/* Enhanced Information */}
+                    <div className="mt-4 p-3 bg-white rounded-lg border border-gray-200">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-5 h-5 mt-0.5">
+                          <svg className="w-full h-full text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-700 mb-2">
+                            Tingkat Prediksi:
+                          </p>
+                          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-2 ${
+                            (hemoglobin && gulaDarah) 
+                              ? 'bg-green-100 text-green-700 border border-green-200' 
+                              : 'bg-blue-100 text-blue-700 border border-blue-200'
+                          }`}>
+                            <div className={`w-2 h-2 rounded-full ${
+                              (hemoglobin && gulaDarah) ? 'bg-green-500' : 'bg-blue-500'
+                            }`}></div>
+                            {(hemoglobin && gulaDarah) 
+                              ? 'Prediksi Akurat (dengan data lab)' 
+                              : 'Prediksi Standar (tanpa data lab)'
+                            }
+                          </div>
+                          <div className="text-xs text-gray-600 leading-relaxed">
+                            {(hemoglobin && gulaDarah) 
+                              ? '• Menggunakan semua parameter kesehatan\n• Analisis cluster kesehatan lebih detail\n• Rekomendasi yang lebih spesifik'
+                              : '• Berdasarkan profil fisik dan riwayat medis\n• Cluster kesehatan umum\n• Rekomendasi pencegahan standar'
+                            }
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -485,7 +546,8 @@ export default function PredictForm() {
                 </form>
               )}
             </>
-          )}{" "}
+          )}
+
           {isSubmitted && predictionResult && (
             <div className="flex items-center justify-center">
               <div className="w-full">

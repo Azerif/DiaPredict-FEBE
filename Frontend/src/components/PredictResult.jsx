@@ -21,19 +21,43 @@ export default function PredictResult({ RiskValue, predictionData, onReset }) {
     borderColor = "border-yellow-200";
     progressColor = "#d97706";
   }
-  // Function untuk menjelaskan cluster berdasarkan nama
-  const getClusterExplanation = (clusterName) => {
-    const clusterExplanations = {
-      'Dewasa/Lansia dengan Potensi Risiko Kesehatan': "Kelompok dewasa/lansia yang memiliki potensi risiko kesehatan. Disarankan untuk melakukan pemeriksaan kesehatan rutin, menjaga pola makan seimbang, dan konsultasi dengan dokter secara berkala untuk pencegahan dini.",
-      'Dewasa Muda/Paruh Baya dengan Kesehatan Relatif Baik': "Kelompok dewasa muda hingga paruh baya dengan kondisi kesehatan yang relatif baik. Pertahankan gaya hidup sehat dengan olahraga teratur, pola makan bergizi, dan cek kesehatan berkala.",
-      'Anak-anak/Remaja Sehat': "Kelompok anak-anak dan remaja dengan kondisi kesehatan yang baik. Fokus pada pola makan bergizi seimbang, aktivitas fisik yang cukup, dan kebiasaan hidup sehat sejak dini.",
-      'Dewasa Muda dengan Perhatian pada Gula Darah': "Kelompok dewasa muda yang perlu memberikan perhatian khusus pada kadar gula darah. Disarankan untuk mengatur pola makan, mengurangi konsumsi gula berlebih, dan melakukan pemeriksaan gula darah secara rutin."
+
+  // Function untuk menjelaskan cluster berdasarkan nama dan model
+  const getClusterExplanation = (clusterName, modelUsed) => {
+    // Cluster untuk model DENGAN data medis (full model)
+    const fullModelExplanations = {
+      'Dewasa/Lansia dengan Potensi Risiko Kesehatan': "Mayoritas anggota berusia di atas 60 tahun dengan rata-rata BMI mendekati 30, HbA1c tinggi (6.02), dan kadar glukosa darah yang cukup tinggi (154 mg/dL). Proporsi hipertensi dan penyakit jantung juga relatif tinggi. Catatan: Terdapat sejumlah kecil individu berusia lebih muda namun memiliki profil kesehatan serupa.",
+      
+      'Dewasa Muda/Paruh Baya dengan Kesehatan Relatif Baik': "Didominasi individu usia sekitar 48 tahun, dengan BMI normal hingga sedikit berlebih. Rata-rata HbA1c dan glukosa darah tergolong normal. Kasus hipertensi dan penyakit jantung sangat rendah.",
+      
+      'Anak-anak/Remaja Sehat': "Kelompok usia termuda (rata-rata 11 tahun), dengan profil kesehatan sangat baik. Hampir seluruh anggota tidak memiliki riwayat penyakit kronis. BMI dan HbA1c tergolong normal.",
+      
+      'Dewasa Muda dengan Perhatian pada Gula Darah': "Kelompok usia 30-an tahun dengan kadar glukosa darah relatif tinggi (150 mg/dL) dan HbA1c mendekati batas prediabetes (5.89). Meski secara umum masih muda dan jarang memiliki penyakit kronis, kelompok ini menunjukkan potensi awal masalah metabolik. Catatan: Beberapa individu lebih muda atau tua juga masuk dalam cluster ini karena kesamaan profil metabolik."
     };
-    return clusterExplanations[clusterName] || "Kategori kesehatan yang memerlukan evaluasi lebih lanjut.";
+
+    // Cluster untuk model TANPA data medis (simple model)
+    const simpleModelExplanations = {
+      'Populasi Lansia dengan Riwayat Kesehatan Kompleks': "Kelompok ini didominasi oleh individu usia lanjut (rata-rata ~64 tahun). Meski BMI rata-rata masih normal, prevalensi hipertensi (12.63%) dan penyakit jantung (8.36%) cukup mencolok. Riwayat merokok beragam, terutama pada kategori never_smoke dan no_info_smoke. Kelompok ini merepresentasikan lansia dengan catatan kesehatan yang perlu perhatian khusus.",
+      
+      'Anak dan Remaja dalam Kondisi Fisik Optimal': "Kelompok dengan rata-rata usia sangat muda (~14 tahun) dan BMI rendah (18.91). Hampir seluruhnya tidak memiliki riwayat hipertensi, penyakit jantung, maupun kebiasaan merokok. Cluster ini menggambarkan populasi anak dan remaja dengan profil kesehatan yang ideal.",
+      
+      'Dewasa dengan Pola Hidup Kurang Sehat': "Berisi individu dewasa (rata-rata usia ~51 tahun) dengan BMI sangat tinggi (~33.73). Banyak anggota kelompok ini memiliki riwayat hipertensi (13.67%) dan penyakit jantung (5.62%), serta riwayat merokok yang cukup tersebar. Kelompok ini mencerminkan gaya hidup yang kurang sehat dan rentan terhadap penyakit metabolik.",
+      
+      'Dewasa Muda Aktif dan Relatif Sehat': "Kelompok ini terdiri dari individu dewasa muda (usia ~28 tahun) dengan BMI normal, serta prevalensi hipertensi dan penyakit jantung yang sangat rendah. Riwayat merokok cukup bervariasi, namun mayoritas tidak merokok. Kelompok ini merepresentasikan usia produktif dengan gaya hidup relatif seimbang dan aktif."
+    };
+
+    // Pilih penjelasan berdasarkan model yang digunakan
+    if (modelUsed === 'simple') {
+      return simpleModelExplanations[clusterName] || "Kategori kesehatan yang memerlukan evaluasi lebih lanjut.";
+    } else {
+      return fullModelExplanations[clusterName] || "Kategori kesehatan yang memerlukan evaluasi lebih lanjut.";
+    }
   };
+
   // Function untuk mendapatkan warna berdasarkan cluster
   const getClusterColor = (clusterName) => {
     const clusterColors = {
+      // Model dengan data medis
       'Dewasa/Lansia dengan Potensi Risiko Kesehatan': { 
         bg: 'bg-red-50', 
         border: 'border-red-200', 
@@ -57,10 +81,40 @@ export default function PredictResult({ RiskValue, predictionData, onReset }) {
         border: 'border-orange-200', 
         text: 'text-orange-700', 
         circle: 'bg-orange-500' 
+      },
+      
+      // Model tanpa data medis
+      'Populasi Lansia dengan Riwayat Kesehatan Kompleks': { 
+        bg: 'bg-red-50', 
+        border: 'border-red-200', 
+        text: 'text-red-700', 
+        circle: 'bg-red-500' 
+      },
+      'Anak dan Remaja dalam Kondisi Fisik Optimal': { 
+        bg: 'bg-blue-50', 
+        border: 'border-blue-200', 
+        text: 'text-blue-700', 
+        circle: 'bg-blue-500' 
+      },
+      'Dewasa dengan Pola Hidup Kurang Sehat': { 
+        bg: 'bg-red-50', 
+        border: 'border-red-200', 
+        text: 'text-red-700', 
+        circle: 'bg-red-500' 
+      },
+      'Dewasa Muda Aktif dan Relatif Sehat': { 
+        bg: 'bg-green-50', 
+        border: 'border-green-200', 
+        text: 'text-green-700', 
+        circle: 'bg-green-500' 
       }
     };
     return clusterColors[clusterName] || { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700', circle: 'bg-gray-500' };
   };
+
+  // Get cluster data
+  const clusterColors = getClusterColor(predictionData?.cluster);
+  const clusterExplanation = getClusterExplanation(predictionData?.cluster, predictionData?.model_used);
 
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-4">
@@ -121,6 +175,32 @@ export default function PredictResult({ RiskValue, predictionData, onReset }) {
             </span>
           </div>
 
+          {/* Cluster Section */}
+          {predictionData?.cluster && (
+            <div className={`${clusterColors.bg} rounded-lg p-3 border ${clusterColors.border} text-left mb-4`}>
+              <div className="flex items-center gap-2 mb-2">
+                <div className={`w-3 h-3 rounded-full ${clusterColors.circle}`}></div>
+                <h3 className={`font-semibold ${clusterColors.text} text-sm`}>
+                  Kategori Kesehatan:
+                </h3>
+              </div>
+              <p className={`font-medium ${clusterColors.text} text-sm mb-2`}>
+                {predictionData?.cluster}
+              </p>
+              <p className="text-gray-600 text-xs leading-relaxed">
+                {clusterExplanation}
+              </p>
+              {predictionData?.cluster_confidence && (
+                <div className="mt-2 pt-2 border-t border-gray-200">
+                  <p className="text-xs text-gray-500">
+                    Confidence: {(predictionData.cluster_confidence * 100).toFixed(2)}%
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Model Information */}
           <div className="bg-white rounded-lg p-3 border border-gray-200 text-left">
             <h3 className="font-semibold text-gray-700 mb-2 text-sm">Penjelasan Diabetes:</h3>
             <p className="text-gray-600 text-xs leading-relaxed">
@@ -134,39 +214,22 @@ export default function PredictResult({ RiskValue, predictionData, onReset }) {
                 "Risiko rendah menunjukkan kondisi yang baik. Tetap jaga pola hidup sehat untuk mempertahankan kondisi ini."
               }
             </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Cluster Result Section */}
-      {predictionData?.cluster && (
-        <div className={`${getClusterColor(predictionData.cluster).bg} border-2 ${getClusterColor(predictionData.cluster).border} rounded-lg p-5`}>
-          <div className="text-center">
-            <h2 className={`text-lg font-bold ${getClusterColor(predictionData.cluster).text} mb-3`}>
-              Analisis Cluster Kesehatan
-            </h2>
-            
-            <div className="bg-white rounded-lg p-4 border border-gray-200 mb-4">
-              <h3 className={`font-semibold ${getClusterColor(predictionData.cluster).text} mb-2`}>
-                {predictionData.cluster}
-              </h3>
-              <p className={`${getClusterColor(predictionData.cluster).text} text-sm`}>
-                {getClusterExplanation(predictionData.cluster)}
-              </p>
-            </div>
-
-            {/* Confidence Score */}
-            {predictionData?.cluster_confidence && (
-              <div className="bg-white rounded-lg p-3 border border-gray-200 text-left">
-                <h3 className="font-semibold text-gray-700 mb-2 text-sm">Detail Cluster:</h3>
-                <div className="text-gray-600 text-xs">
-                  <p>Confidence Score: {(predictionData.cluster_confidence * 100).toFixed(2)}%</p>
+            {predictionData?.model_used && (
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <p className="text-xs text-gray-500">
+                  <span className="font-medium">Model:</span> {predictionData.model_used === 'simple' ? 'Prediksi Sederhana' : 'Prediksi Lengkap'}
+                </p>
+                <div className="text-xs text-gray-400 mt-1 whitespace-pre-line">
+                  {predictionData.model_used === 'simple' 
+                    ? '• Tanpa data medis (HbA1c & Gula Darah)\n• Menggunakan: Usia, BMI, Jenis Kelamin, Hipertensi, Penyakit Jantung, Riwayat Merokok'
+                    : '• Dengan data medis lengkap\n• Menggunakan: Semua data termasuk HbA1c dan Gula Darah'
+                  }
                 </div>
               </div>
             )}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Action Buttons */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
