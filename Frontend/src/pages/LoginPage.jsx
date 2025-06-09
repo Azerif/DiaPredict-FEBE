@@ -119,9 +119,9 @@ const LoginPage = () => {
               </div>
 
               <div className="flex justify-between text-sm mb-4">
-                <a href="#" className="font-medium hover:text-[#00B7E0]">
+                <Link to="/forgot-password" className="font-medium hover:text-[#00B7E0]">
                   Lupa Kata Sandi?
-                </a>
+                </Link>
               </div>
 
               <div className="mb-4 flex items-center gap-2">

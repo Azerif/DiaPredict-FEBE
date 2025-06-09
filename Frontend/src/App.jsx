@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { UserProvider } from "./contexts/UserContext";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute, PublicRoute } from "./routes";
 import "./App.css";
 import LoginPage from "./pages/LoginPage";
@@ -10,11 +9,11 @@ import HistoriPage from "./pages/HistoriPage";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Education from "./pages/Education";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { AnimatePresence } from "framer-motion";
 import ScrollToTop from "./lib/scrollToTop";
 
-function App() {
-  const [count, setCount] = useState(0);
+function AppRoutes() {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
@@ -34,6 +33,14 @@ function App() {
           element={
             <PublicRoute>
               <RegisterPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPasswordPage />
             </PublicRoute>
           }
         />
@@ -72,6 +79,10 @@ function App() {
       </Routes>
     </AnimatePresence>
   );
+}
+
+function App() {
+  return <AppRoutes />;
 }
 
 export default App;

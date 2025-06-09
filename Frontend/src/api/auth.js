@@ -17,3 +17,18 @@ export const loginUser = async (payload) => {
     throw error.response?.data || { message: 'Unknown error' };
   }
 };
+
+export const forgotPassword = async (data) => {
+  const response = await axios.post('/auth/forgot-password', data);
+  return response.data;
+};
+
+export const verifyResetCode = async (data) => {
+  const response = await axios.post('/auth/verify-reset-code', data);
+  return response.data;
+};
+
+export const resetPassword = async (data) => {
+  const response = await axios.post('/auth/reset-password', data);
+  return response.data;
+};
