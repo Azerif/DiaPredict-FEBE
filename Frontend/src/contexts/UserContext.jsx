@@ -20,7 +20,6 @@ export const UserProvider = ({ children }) => {
       setIsLoading(true);
       const response = await getProfile();
       const userData = response?.data;
-
       if (userData?.name && userData?.email) {
         setUser({
           name: userData.name,
@@ -30,10 +29,11 @@ export const UserProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching user:", error);
-
       if (error.response?.status === 401) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
         setUser({ name: "", email: "", image: null });
       }
     } finally {
@@ -53,7 +53,10 @@ export const UserProvider = ({ children }) => {
   };
   useEffect(() => {
     const checkToken = () => {
-      const token = localStorage.getItem("token");
+      let token = localStorage.getItem("token");
+      if (!token) {
+        token = sessionStorage.getItem("token");
+      }
       if (token) {
         if (!isInitialized) {
           fetchUser();
@@ -63,19 +66,18 @@ export const UserProvider = ({ children }) => {
         setUser({ name: "", email: "", image: null });
       }
     };
-
     checkToken();
-
     const handleStorageChange = (e) => {
       if (e.key === "token") {
-        if (e.newValue) {
+        const localToken = localStorage.getItem("token");
+        const sessionToken = sessionStorage.getItem("token");
+        if (e.newValue || localToken || sessionToken) {
           fetchUser();
         } else {
           clearUser();
         }
       }
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [isInitialized]);

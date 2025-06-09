@@ -24,11 +24,18 @@ const LoginPage = () => {
 
     try {
       const res = await loginUser({ email, password });
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
+      if (checked) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+      } else {
+        sessionStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
       await fetchUser();
-
       alertSuccess("Login berhasil! Selamat datang di DiaPredict.");
       navigate("/home");
     } catch (err) {

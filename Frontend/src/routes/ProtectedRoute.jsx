@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (isInitialized && (!user.name || !user.email || !localStorage.getItem('token'))) {
+  if (isInitialized && (!user.name || !user.email || (!localStorage.getItem('token') && !sessionStorage.getItem('token')))) {
     return <Navigate to="/login" replace />;
   }
 
