@@ -56,14 +56,12 @@ class UserModel {
   // Update reset code
   async updateResetCode(userId, resetCode, resetCodeExpiry) {
     try {
-      // Pastikan menyimpan tanggal dalam format ISO string
-      const resetCodeExpiryISO = resetCodeExpiry.toISOString();
-      
+      // resetCodeExpiry sudah dalam format ISO string dari controller
       const { data, error } = await supabase
         .from('users')
         .update({
           reset_code: resetCode,
-          reset_code_expiry: resetCodeExpiryISO
+          reset_code_expiry: resetCodeExpiry // sudah dalam format ISO string
         })
         .eq('id', userId)
         .select();

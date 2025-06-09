@@ -130,18 +130,31 @@ class AuthController {
           success: false,
           message: 'Email tidak terdaftar'
         });
-      }      // Generate reset code (6 digit)
+      }
+
+      // Generate reset code (6 digit)
       const resetCode = generateResetCode();
       
-      // Tambahkan 7 jam (timezone Indonesia) untuk mengatasi masalah timezone
-      const resetCodeExpiry = new Date(Date.now() + 30 * 60 * 1000 + 7 * 60 * 60 * 1000); // 30 menit dari sekarang + 7 jam (WIB)
+      // Gunakan waktu lokal yang tepat (30 menit dari sekarang)
+      const now = new Date();
+      const resetCodeExpiry = new Date(now.getTime() + 30 * 60 * 1000); // 30 menit dari sekarang
+      const resetCodeExpiryISO = new Date(resetCodeExpiry.getTime() - (resetCodeExpiry.getTimezoneOffset() * 60000)).toISOString();
 
       console.log('Generated reset code:', resetCode);
-      console.log('Current time:', new Date());
-      console.log('Expiry time with offset:', resetCodeExpiry);
+      console.log('Current local time:', new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString());
+      console.log('Expiry local time:', resetCodeExpiryISO);
 
       // Update user dengan reset code
-      await UserModel.updateResetCode(user.id, resetCode, resetCodeExpiry);
+      await UserModel.updateResetCode(user.id, resetCode, resetCodeExpiryISO);
+
+      try {
+        await sendResetPasswordEmail(email, resetCode);
+        console.log('Reset password email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send reset email:', emailError);
+        // Optional: Anda bisa memilih untuk tetap return success atau error
+        // Untuk testing, bisa tetap return success meskipun email gagal
+      }
 
       // Log reset code untuk testing (hapus di production)
       console.log(`Reset code for ${email}: ${resetCode}`);

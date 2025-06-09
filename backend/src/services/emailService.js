@@ -40,7 +40,7 @@ const sendResetPasswordEmail = async (email, resetCode) => {
           </p>
           
           <p style="color: #999; font-size: 12px; margin-top: 30px;">
-            Kode ini akan expired dalam 15 menit. Jika Anda tidak meminta reset password, 
+            Kode ini akan expired dalam 30 menit. Jika Anda tidak meminta reset password, 
             abaikan email ini.
           </p>
         </div>
