@@ -1,6 +1,13 @@
+const AuthController = require('./auth.controller');
+const UserController = require('./user.controller');
+const HealthRecordController = require('./healthRecord.controller');
+const PredictionController = require('./prediction.controller');
+const TestimonialController = require('./testimonial.controller');
+
 module.exports = {
-  AuthController: require('./auth.controller'),
-  UserController: require('./user.controller'),
-  HealthRecordController: require('./healthRecord.controller'),
-  PredictionController: require('./prediction.controller')
+  AuthController,
+  UserController,
+  HealthRecordController,
+  PredictionController,
+  TestimonialController
 };

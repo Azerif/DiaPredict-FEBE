@@ -21,6 +21,7 @@ export default function PredictForm() {
   const [umur, setUmur] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
     if (tinggi && berat) {
@@ -72,17 +73,72 @@ export default function PredictForm() {
     setCurrentStep(1);
   };
 
+  // Validasi data medis opsional
+  const validateMedicalData = () => {
+    const errors = {};
+    const hasHbA1c = hemoglobin && hemoglobin.trim() !== '' && parseFloat(hemoglobin) > 0;
+    const hasGlucose = gulaDarah && gulaDarah.trim() !== '' && parseInt(gulaDarah) > 0;
+
+    // Jika salah satu terisi, keduanya harus terisi
+    if ((hasHbA1c && !hasGlucose) || (!hasHbA1c && hasGlucose)) {
+      if (hasHbA1c && !hasGlucose) {
+        errors.gulaDarah = "Gula darah harus diisi jika HbA1c diisi";
+      }
+      if (!hasHbA1c && hasGlucose) {
+        errors.hemoglobin = "HbA1c harus diisi jika gula darah diisi";
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Reset validation errors ketika input berubah
+  const handleHemoglobinChange = (value) => {
+    setHemoglobin(value);
+    
+    // Clear validation errors ketika user mengetik
+    if (validationErrors.hemoglobin || validationErrors.gulaDarah) {
+      setValidationErrors({});
+    }
+  };
+
+  const handleGulaDarahChange = (value) => {
+    setGulaDarah(value);
+    
+    // Clear validation errors ketika user mengetik
+    if (validationErrors.hemoglobin || validationErrors.gulaDarah) {
+      setValidationErrors({});
+    }
+  };
+
+  // Cek apakah form valid untuk enable/disable tombol
+  const isFormValid = () => {
+    const hasHbA1c = hemoglobin && hemoglobin.trim() !== '' && parseFloat(hemoglobin) > 0;
+    const hasGlucose = gulaDarah && gulaDarah.trim() !== '' && parseInt(gulaDarah) > 0;
+    
+    // Valid jika:
+    // 1. Keduanya kosong (prediksi standar), atau
+    // 2. Keduanya terisi (prediksi akurat)
+    return (!hasHbA1c && !hasGlucose) || (hasHbA1c && hasGlucose);
+  };
+
   const handleSubmitStep2 = async (e) => {
     e.preventDefault();
 
+    // Validasi data medis terlebih dahulu
+    if (!validateMedicalData()) {
+      return;
+    }
+
     // Cek apakah data medis tersedia
-    const hasHbA1c = hemoglobin && parseFloat(hemoglobin) > 0;
-    const hasGlucose = gulaDarah && parseInt(gulaDarah) > 0;
+    const hasHbA1c = hemoglobin && hemoglobin.trim() !== '' && parseFloat(hemoglobin) > 0;
+    const hasGlucose = gulaDarah && gulaDarah.trim() !== '' && parseInt(gulaDarah) > 0;
     const useSimpleModel = !hasHbA1c || !hasGlucose;
 
     let confirmMessage = "Apakah anda yakin data yang di isi sudah benar?";
     if (useSimpleModel) {
-      confirmMessage += "\n\nCatatan: Data hemoglobin atau gula darah tidak lengkap, sistem akan menggunakan model prediksi sederhana.";
+      confirmMessage += "\n\nCatatan: Data medis tidak diisi, sistem akan menggunakan model prediksi sederhana.";
     }
 
     const result = await confirmAlert(confirmMessage);
@@ -100,7 +156,7 @@ export default function PredictForm() {
         // 2. Backend akan otomatis memilih model yang tepat berdasarkan ketersediaan data
         const predictionData = {
           health_record_id: healthRecordResponse.data.id,
-          use_simple_model: useSimpleModel
+          use_simple_model: useSimpleModel,
         };
 
         const savedPrediction = await createPrediction(predictionData);
@@ -115,10 +171,9 @@ export default function PredictForm() {
           cluster_result: savedPrediction.data.ml_results?.cluster,
           model_used: savedPrediction.data.model_used,
           database_id: savedPrediction.data.id,
-          health_record_id: healthRecordResponse.data.id
+          health_record_id: healthRecordResponse.data.id,
         });
         setIsSubmitted(true);
-
       } catch (error) {
         console.error("Error:", error);
         alert("Terjadi kesalahan saat memproses data. Silakan coba lagi.");
@@ -143,6 +198,7 @@ export default function PredictForm() {
     setCurrentStep(0);
     setIsSubmitted(false);
     setPredictionResult(null);
+    setValidationErrors({}); // Reset validation errors
   };
 
   return (
@@ -423,13 +479,14 @@ export default function PredictForm() {
                     </div>
                   </div>
 
-                  {/* Medical Data - Optional */}
+                  {/* Medical Data - Optional with Validation */}
                   <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                     <h3 className="text-base font-semibold text-gray-800 mb-3">
                       Data Medis (Opsional)
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
-                      Data medis akan meningkatkan akurasi prediksi secara signifikan. Kosongkan jika tidak memiliki hasil laboratorium terbaru.
+                      Data medis akan meningkatkan akurasi prediksi secara signifikan.{" "}
+                      <span className="font-medium text-amber-700"> Jika ingin mengisi, kedua data harus dilengkapi.</span>
                     </p>
                     
                     <div className="grid md:grid-cols-2 gap-4">
@@ -441,10 +498,22 @@ export default function PredictForm() {
                           type="number"
                           step="0.1"
                           value={hemoglobin}
-                          onChange={(e) => setHemoglobin(e.target.value)}
+                          onChange={(e) => handleHemoglobinChange(e.target.value)}
                           placeholder="Contoh: 6.5"
-                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-rose-500 focus:outline-none text-sm"
+                          className={`w-full border-2 rounded-lg px-3 py-2 focus:outline-none text-sm ${
+                            validationErrors.hemoglobin 
+                              ? 'border-red-500 focus:border-red-500 bg-red-50' 
+                              : 'border-gray-200 focus:border-rose-500'
+                          }`}
                         />
+                        {validationErrors.hemoglobin && (
+                          <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {validationErrors.hemoglobin}
+                          </p>
+                        )}
                         <p className="text-xs text-gray-500 mt-1">
                           Kadar gula darah rata-rata 2-3 bulan terakhir
                         </p>
@@ -457,17 +526,29 @@ export default function PredictForm() {
                         <input
                           type="number"
                           value={gulaDarah}
-                          onChange={(e) => setGulaDarah(e.target.value)}
+                          onChange={(e) => handleGulaDarahChange(e.target.value)}
                           placeholder="Contoh: 120"
-                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-amber-500 focus:outline-none text-sm"
+                          className={`w-full border-2 rounded-lg px-3 py-2 focus:outline-none text-sm ${
+                            validationErrors.gulaDarah 
+                              ? 'border-red-500 focus:border-red-500 bg-red-50' 
+                              : 'border-gray-200 focus:border-amber-500'
+                          }`}
                         />
+                        {validationErrors.gulaDarah && (
+                          <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {validationErrors.gulaDarah}
+                          </p>
+                        )}
                         <p className="text-xs text-gray-500 mt-1">
                           Kadar glukosa darah saat pemeriksaan
                         </p>
                       </div>
                     </div>
 
-                    {/* Enhanced Information */}
+                    {/* Enhanced Information with validation status */}
                     <div className="mt-4 p-3 bg-white rounded-lg border border-gray-200">
                       <div className="flex items-start gap-3">
                         <div className="flex-shrink-0 w-5 h-5 mt-0.5">
@@ -482,19 +563,29 @@ export default function PredictForm() {
                           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-2 ${
                             (hemoglobin && gulaDarah) 
                               ? 'bg-green-100 text-green-700 border border-green-200' 
+                              : !isFormValid()
+                              ? 'bg-red-100 text-red-700 border border-red-200'
                               : 'bg-blue-100 text-blue-700 border border-blue-200'
                           }`}>
                             <div className={`w-2 h-2 rounded-full ${
-                              (hemoglobin && gulaDarah) ? 'bg-green-500' : 'bg-blue-500'
+                              (hemoglobin && gulaDarah) 
+                                ? 'bg-green-500' 
+                                : !isFormValid()
+                                ? 'bg-red-500'
+                                : 'bg-blue-500'
                             }`}></div>
                             {(hemoglobin && gulaDarah) 
                               ? 'Prediksi Akurat (dengan data lab)' 
+                              : !isFormValid()
+                              ? 'Data medis tidak lengkap'
                               : 'Prediksi Standar (tanpa data lab)'
                             }
                           </div>
-                          <div className="text-xs text-gray-600 leading-relaxed">
+                          <div className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
                             {(hemoglobin && gulaDarah) 
                               ? '• Menggunakan semua parameter kesehatan\n• Analisis cluster kesehatan lebih detail\n• Rekomendasi yang lebih spesifik'
+                              : !isFormValid()
+                              ? '• Kedua data medis harus diisi jika ingin menggunakan prediksi akurat\n• Atau kosongkan keduanya untuk prediksi standar'
                               : '• Berdasarkan profil fisik dan riwayat medis\n• Cluster kesehatan umum\n• Rekomendasi pencegahan standar'
                             }
                           </div>
@@ -513,8 +604,12 @@ export default function PredictForm() {
                     </button>
                     <button
                       type="submit"
-                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                      disabled={isLoading}
+                      className={`px-6 py-2 rounded-lg font-medium text-sm flex items-center gap-2 ${
+                        !isFormValid() || isLoading
+                          ? 'bg-gray-400 cursor-not-allowed text-white'
+                          : 'bg-green-500 hover:bg-green-600 text-white'
+                      }`}
+                      disabled={!isFormValid() || isLoading}
                     >
                       {isLoading && (
                         <svg

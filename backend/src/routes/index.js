@@ -7,12 +7,14 @@ const authRoutes = require('./auth.routes');
 const userRoutes = require('./user.routes');
 const healthRecordRoutes = require('./health-record.routes');
 const predictionRoutes = require('./prediction.routes');
+const testimonialRoutes = require('./testimonial.routes');
 
 // Define API routes
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/health-records', healthRecordRoutes);
 router.use('/predictions', predictionRoutes);
+router.use('/testimonials', testimonialRoutes);
 
 // Define a test route
 router.get('/test', (req, res) => {
