@@ -5,10 +5,12 @@ import NavbarAfter from '../components/NavbarAfter'
 
 const HistoriPage = () => {
   return (
-    <div>
-        <NavbarAfter />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+      <NavbarAfter />
+      <main className="py-10 mt-2">
         <HistoriSection />
-        <Footer showUserNav={true} />
+      </main>
+      <Footer showUserNav={true} />
     </div>
   )
 }
