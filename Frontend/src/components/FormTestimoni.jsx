@@ -69,6 +69,9 @@ const FormTestimoni = () => {
 
   return (
     <dialog id="my_modal_4" className="modal modal-bottom sm:modal-middle">
+      <form method="dialog" className="modal-backdrop">
+        <button>close</button>
+      </form>
       <div className="modal-box bg-white">
         <h3 className="font-bold text-lg mb-4">
           Bagikan Pengalaman Anda Bersama <span className="text-[#00B7E0]">DiaPredict</span>
@@ -113,7 +116,6 @@ const FormTestimoni = () => {
               Maksimal 500 karakter ({deskripsi.length}/500)
             </span>
           </div>
-
 
           {/* Tombol aksi */}
           <div className="modal-action flex justify-end gap-3 pt-4">
