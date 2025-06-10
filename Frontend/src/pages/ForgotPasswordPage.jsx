@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword, verifyResetCode, resetPassword } from "../api/auth";
 import { alertSuccess, alertError } from "../lib/alerts";
 import { motion } from "framer-motion";
 
 const ForgotPasswordPage = () => {
+  const navigate = useNavigate();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const [step, setStep] = useState(1); // 1: email, 2: code, 3: password
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -13,6 +15,17 @@ const ForgotPasswordPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Effect untuk handle redirect
+  useEffect(() => {
+    if (shouldRedirect) {
+      const timer = setTimeout(() => {
+        navigate("/login");
+      }, 3000); // Redirect setelah 3 detik
+      
+      return () => clearTimeout(timer);
+    }
+  }, [shouldRedirect, navigate]);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
@@ -70,9 +83,10 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
     try {
       await resetPassword({ email, code, password });
+      
       alertSuccess("Password berhasil direset! Silakan login dengan password baru.");
-      // Redirect ke login page
-      window.location.href = "/login";
+      setShouldRedirect(true);
+      
     } catch (err) {
       alertError(err.response?.data?.message || "Gagal reset password.");
     } finally {

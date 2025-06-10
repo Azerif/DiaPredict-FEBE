@@ -318,7 +318,7 @@ export default function Education() {
             </div>
           </section>
         </main>
-        <Footer />
+        <Footer showUserNav={true} />
       </div>
     </ObserverProvider>
   );

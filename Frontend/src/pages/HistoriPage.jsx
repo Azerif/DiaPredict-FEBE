@@ -8,7 +8,7 @@ const HistoriPage = () => {
     <div>
         <NavbarAfter />
         <HistoriSection />
-        <Footer />
+        <Footer showUserNav={true} />
     </div>
   )
 }
