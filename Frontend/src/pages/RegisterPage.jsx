@@ -226,10 +226,36 @@ const RegisterPage = () => {
                 </div>
               </div>
 
+              <div className="mb-4">
+                <div className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    id="agreeToTerms"
+                    name="agreeToTerms"
+                    required
+                    className="mt-1 w-4 h-4 text-[#00B7E0] border-gray-300 rounded focus:ring-[#00B7E0]"
+                  />
+                  <label htmlFor="agreeToTerms" className="text-sm text-gray-600">
+                    Saya setuju dengan{' '}
+                    <Link to="/legal/eula" className="text-[#00B7E0] hover:underline font-medium">
+                      EULA
+                    </Link>
+                    {', '}
+                    <Link to="/legal/privacy-policy" className="text-[#00B7E0] hover:underline font-medium">
+                      Kebijakan Privasi
+                    </Link>
+                    {', dan '}
+                    <Link to="/legal/terms" className="text-[#00B7E0] hover:underline font-medium">
+                      Syarat & Ketentuan
+                    </Link>
+                  </label>
+                </div>
+              </div>
+
               {error && (
-                <p className="mb-4 text-red-600 font-semibold text-center">
+                <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded">
                   {error}
-                </p>
+                </div>
               )}
 
               <button

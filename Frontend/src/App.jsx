@@ -12,6 +12,9 @@ import Education from "./pages/Education";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { AnimatePresence } from "framer-motion";
 import ScrollToTop from "./lib/scrollToTop";
+import EULA from './pages/EULA';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
 
 function AppRoutes() {
   const location = useLocation();
@@ -76,6 +79,15 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        {/* Legal Pages - Public Access dengan Landing Page Layout */}
+        <Route path="/legal/eula" element={<EULA />} />
+        <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/legal/terms" element={<TermsAndConditions />} />
+        
+        {/* Keep old routes for footer links */}
+        <Route path="/eula" element={<EULA />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
       </Routes>
     </AnimatePresence>
   );

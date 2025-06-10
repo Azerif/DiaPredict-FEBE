@@ -65,7 +65,20 @@ const Footer = ({ showUserNav = false }) => {
 
         {/* Copyright */}
         <div className="bg-[#00B7E0] text-white text-center py-3 mt-6">
-            ©Copyright | All Rights Reserved
+            <div className="max-w-[1200px] mx-auto px-6">
+                <p className="mb-2">©Copyright | All Rights Reserved</p>
+                <div className="flex flex-wrap justify-center gap-4 text-sm">
+                    <Link to="/eula" className="hover:underline">
+                        EULA
+                    </Link>
+                    <Link to="/privacy-policy" className="hover:underline">
+                        Kebijakan Privasi
+                    </Link>
+                    <Link to="/terms" className="hover:underline">
+                        Syarat & Ketentuan
+                    </Link>
+                </div>
+            </div>
         </div>
     </footer>
   )
