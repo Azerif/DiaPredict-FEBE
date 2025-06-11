@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Education from "./pages/Education";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { AnimatePresence } from "framer-motion";
-import ScrollToTop from "./lib/scrollToTop";
+import ScrollToTop from "./lib/ScrollToTop";
 import EULA from './pages/EULA';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
