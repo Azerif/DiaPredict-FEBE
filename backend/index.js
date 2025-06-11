@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./src/config');
 const routes = require('./src/routes');
-
 // Initialize Express app
 const app = express();
 
