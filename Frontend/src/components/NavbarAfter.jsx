@@ -16,11 +16,31 @@ const NavbarAfter = () => {
       }
     };
 
+    // Handle close tab - hapus sessionStorage jika user tidak centang "Tetap Masuk"
+    const handleBeforeUnload = () => {
+      // Jika token ada di sessionStorage (artinya user tidak centang "Tetap Masuk")
+      if (sessionStorage.getItem('token')) {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
+
   const handleLogout = async () => {
+    // Hapus token dari kedua storage
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    
     await clearUser();
     setDropdownOpen(false);
     navigate("/");

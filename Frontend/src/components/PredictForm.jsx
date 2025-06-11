@@ -635,7 +635,7 @@ export default function PredictForm() {
                       )}
                       {isLoading
                         ? "Memproses..."
-                        : "Prediksi Risiko Diabetes & Cluster"}
+                        : <>Prediksi Risiko <br />Diabetes & Cluster</>}
                     </button>
                   </div>
                 </form>

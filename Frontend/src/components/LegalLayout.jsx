@@ -4,8 +4,8 @@ import NavbarAfter from './NavbarAfter';
 import Footer from './Footer';
 
 const LegalLayout = ({ children, title, description }) => {
-  // Cek apakah user sudah login dengan memeriksa token di sessionStorage
-  const isLoggedIn = sessionStorage.getItem('token') !== null;
+  // Cek token di kedua storage
+  const isLoggedIn = sessionStorage.getItem('token') !== null || localStorage.getItem('token') !== null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
