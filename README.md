@@ -14,6 +14,7 @@ Capstone project for Coding Camp DBS Foundation x Dicoding 2025
 | Name | Student ID | Role | LinkedIn | Github |
 | :------------------ | :------------- | :------------------ | :------------------ | :------------------ |
 | `Andre Putra Wijaya` | `FC009D5Y0410` | `Front-End Web and Back-End` |
+| `Laksana Muhammad Agung Buwono` | `FC012D5Y1475` | `Front-End Web and Back-End` |[LinkedIn](https://www.linkedin.com/in/laksanamagungb/)|[GitHub](https://github.com/LkmAgung)
 
 
 
