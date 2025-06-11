@@ -383,22 +383,22 @@ export default function HistoriSection() {
         filteredData.map((group, monthIndex) => (
           <div key={group.bulan} className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
             {/* Month Header */}
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+            <div className="flex flex-col gap-4 items-center justify-between mb-4 pb-3 border-b border-gray-200">
               {/* Left side - Month info */}
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#CCF1F9] rounded-full flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-[#00B7E0]" />
-                </div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {group.bulan}
-                </h2>
-                <span className="bg-[#CCF1F9] text-[#00B7E0] px-2 py-1 rounded-full text-xs font-medium">
-                  {group.items.length} prediksi
-                </span>
+              <div className="flex items-center gap-3"> 
+                  <div className="w-8 h-8 bg-[#CCF1F9] rounded-full flex items-center justify-center">
+                    <Calendar className="w-4 h-4 text-[#00B7E0]" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {group.bulan}
+                  </h2>
               </div>
 
               {/* Right side - Action buttons */}
               <div className="flex items-center gap-2">
+                <span className="bg-[#CCF1F9] text-[#00B7E0] px-2 py-1 rounded-full text-xs font-medium">
+                  {group.items.length} prediksi
+                </span>
                 <button
                   className="flex items-center gap-1 px-3 py-1 bg-[#00B7E0] hover:bg-[#0099CC] text-white rounded-lg text-xs font-medium"
                   onClick={() => {
@@ -464,13 +464,12 @@ export default function HistoriSection() {
                               <span className="text-sm text-gray-600">Hasil Diabetes:</span>
                               <span className="font-bold text-[#00B7E0]">{item.result}%</span>
                             </div>
-                          </div>
-
-                          <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${riskColors.bg} ${riskColors.border} border`}>
-                            <div className={`w-2 h-2 rounded-full ${riskColors.dot}`}></div>
-                            <span className={`text-xs font-medium ${riskColors.text} capitalize`}>
-                              {item.risk}
-                            </span>
+                            <div className={`w-1/2 md:w-1/5 mt-2 flex items-center gap-2 px-3 py-1 rounded-full ${riskColors.bg} ${riskColors.border} border`}>
+                                <div className={`w-2 h-2 rounded-full ${riskColors.dot}`}></div>
+                                <span className={`text-xs font-medium ${riskColors.text} capitalize`}>
+                                  {item.risk}
+                                </span>
+                            </div>
                           </div>
                         </div>
 

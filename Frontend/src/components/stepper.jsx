@@ -3,7 +3,7 @@ import React from "react";
 const Stepper = ({ currentStep }) => {
   return (
     <div className="flex items-center justify-center max-w-md mx-auto mt-6 mb-8">
-      <div className="flex items-center w-full">
+      <div className="flex items-center w-2xl">
         {/* Step 1 */}
         <div className="flex flex-col items-center flex-1">
           <div
@@ -58,7 +58,7 @@ const Stepper = ({ currentStep }) => {
               "2"
             )}
           </div>
-          <p className={`text-sm font-medium mt-2 ${
+          <p className={`text-xs font-thin mt-2 ${
             currentStep >= 1 ? "text-[#00B7E0]" : "text-gray-400"
           }`}>
             Riwayat Kesehatan

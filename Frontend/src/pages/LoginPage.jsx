@@ -45,9 +45,9 @@ const LoginPage = () => {
 
   return (
     <ObserverProvider>
-      <section className="flex flex-col-reverse h-screen md:flex-row md:h-screen">
+      <section className="flex flex-col-reverse md:flex-row md:h-screen">
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-10 bg-white intersect:motion-preset-slide-down">
-          <div className="w-full max-w-md in">
+          <div className="w-full max-w-md">
             <h1 className="text-3xl font-bold mb-2">
               Selamat datang di Dia
               <span className="text-[#00B7E0]">Predict</span>

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 const Footer = ({ showUserNav = false }) => {
   return (
     <footer className="bg-[#CCF1F9] text-black pt-10">
-        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-2 gap-4 md:grid-cols-4">
             {/* Logo Dan Deskripsi */}
             <div className='mb-10'>
                 <h2 className="text-2xl font-bold">Dia<span className="text-sky-500">Predict.</span></h2>
@@ -19,7 +19,7 @@ const Footer = ({ showUserNav = false }) => {
             {/* Navigasi */}
             <div className='mb-10'>
                 <h3 className="font-semibold mb-2">Navigasi</h3>
-                <ul className="space-y-1">
+                <ul className="space-y-1 mt-4">
                     {showUserNav ? (
                         // Navigasi untuk user yang sudah login
                         <>

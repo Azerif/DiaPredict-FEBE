@@ -17,7 +17,7 @@ const LegalLayout = ({ children, title, description }) => {
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
             <div className="text-center mb-8">
-              <div className="flex justify-center items-center gap-3 mb-4">
+              <div className="flex flex-col justify-center items-center gap-3 mb-4">
                 <div className="p-3 bg-[#CCF1F9] rounded-full">
                   <svg
                     className="w-6 h-6 text-[#00B7E0]"
