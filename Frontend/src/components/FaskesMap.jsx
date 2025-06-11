@@ -28,19 +28,6 @@ function ResizeMap() {
   return null;
 }
 
-// Component to center map on user location updates
-function MapUpdater({ position }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (position) {
-      map.setView(position, 15);
-    }
-  }, [position, map]);
-  
-  return null;
-}
-
 function hitungJarak(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -60,12 +47,77 @@ export default function FaskesTerdekat() {
   const [faskesList, setFaskesList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [locationError, setLocationError] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
-  // Geolocation options for higher accuracy
+  // Geolocation options
   const geoOptions = {
     enableHighAccuracy: true,
-    timeout: 10000,      // 10 seconds
-    maximumAge: 0        // Always get fresh location
+    timeout: 10000,
+    maximumAge: 300000
+  };
+
+  // Function untuk fetch data faskes
+  const fetchFaskesData = async (lat, lng) => {
+    if (dataLoaded) return;
+    
+    try {
+      setIsLoading(true);
+      
+      const query = `
+        [out:json];
+        (
+          node["amenity"~"hospital|clinic"](around:1000,${lat},${lng});
+          way["amenity"~"hospital|clinic"](around:1000,${lat},${lng});
+          relation["amenity"~"hospital|clinic"](around:1000,${lat},${lng});
+        );
+        out center;
+      `;
+
+      const response = await fetch("https://overpass-api.de/api/interpreter", {
+        method: "POST",
+        body: query,
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      const list = data.elements.map((el) => {
+        let elLat, elLng;
+        if (el.type === "node") {
+          elLat = el.lat;
+          elLng = el.lon;
+        } else if (el.type === "way" || el.type === "relation") {
+          elLat = el.center.lat;
+          elLng = el.center.lon;
+        }
+        const jarak = hitungJarak(elLat, elLng, lat, lng);
+        return {
+          id: el.id,
+          name: el.tags?.name || "Faskes tanpa nama",
+          address: el.tags?.address || el.tags?.["addr:full"] || "-",
+          type: el.tags?.amenity === "hospital" ? "Rumah Sakit" : "Klinik",
+          lat: elLat,
+          lng: elLng,
+          jarak: jarak.toFixed(2),
+        };
+      });
+
+      list.sort((a, b) => a.jarak - b.jarak);
+      setFaskesList(list);
+      setDataLoaded(true);
+      
+    } catch (error) {
+      console.error("Error fetching faskes data:", error);
+      alertError("Gagal mengambil data faskes. Silakan coba lagi.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -76,107 +128,42 @@ export default function FaskesTerdekat() {
       return;
     }
     
-    // Clear any previous errors
     setLocationError(null);
     setIsLoading(true);
 
-    // Try to get location with high accuracy
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const userCoords = [pos.coords.latitude, pos.coords.longitude];
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userCoords = [position.coords.latitude, position.coords.longitude];
         setUserPosition(userCoords);
-        setIsLoading(false);
-        console.log("Akurasi lokasi: ±", pos.coords.accuracy, "meter");
+        console.log("Lokasi ditemukan:", userCoords);
+        console.log("Akurasi lokasi: ±", position.coords.accuracy, "meter");
+        
+        fetchFaskesData(position.coords.latitude, position.coords.longitude);
       },
-      (err) => {
-        setLocationError(`Error: ${err.message}`);
+      (error) => {
+        setLocationError(`Error: ${error.message}`);
         setIsLoading(false);
         
         let errorMsg;
-        switch (err.code) {
-          case err.PERMISSION_DENIED:
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
             errorMsg = "Akses lokasi ditolak. Mohon izinkan akses lokasi di browser Anda";
             break;
-          case err.POSITION_UNAVAILABLE:
+          case error.POSITION_UNAVAILABLE:
             errorMsg = "Informasi lokasi tidak tersedia. Coba refresh halaman";
             break;
-          case err.TIMEOUT:
+          case error.TIMEOUT:
             errorMsg = "Waktu permintaan lokasi habis. Coba lagi";
             break;
           default:
-            errorMsg = `Gagal mendapatkan lokasi: ${err.message}`;
+            errorMsg = `Gagal mendapatkan lokasi: ${error.message}`;
         }
         alertError(errorMsg);
       },
       geoOptions
     );
-    
-    // Cleanup: stop watching position when component unmounts
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
   }, []);
 
-  useEffect(() => {
-    if (!userPosition) return;
-
-    setIsLoading(true);
-    const [lat, lng] = userPosition;
-    
-    // Increased search radius to 3000 meters (3km)
-    const query = `
-      [out:json];
-      (
-        node["amenity"~"hospital|clinic"](around:1000,${lat},${lng});
-        way["amenity"~"hospital|clinic"](around:1000,${lat},${lng});
-        relation["amenity"~"hospital|clinic"](around:1000,${lat},${lng});
-      );
-      out center;
-    `;
-
-    fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      body: query,
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const list = data.elements.map((el) => {
-          let lat, lng;
-          if (el.type === "node") {
-            lat = el.lat;
-            lng = el.lon;
-          } else if (el.type === "way" || el.type === "relation") {
-            lat = el.center.lat;
-            lng = el.center.lon;
-          }
-          const jarak = hitungJarak(lat, lng, userPosition[0], userPosition[1]);
-          return {
-            id: el.id,
-            name: el.tags?.name || "Faskes tanpa nama",
-            address: el.tags?.address || el.tags?.["addr:full"] || "-",
-            type: el.tags?.amenity === "hospital" ? "Rumah Sakit" : "Klinik",
-            lat,
-            lng,
-            jarak: jarak.toFixed(2), // km
-          };
-        });
-
-        // Urutkan berdasarkan jarak terdekat
-        list.sort((a, b) => a.jarak - b.jarak);
-        setFaskesList(list);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching faskes data:", error);
-        alertError("Gagal mengambil data faskes");
-        setIsLoading(false);
-      });
-  }, [userPosition]);
-
-  // Loading state
   if (isLoading && !userPosition) {
     return (
       <div className="flex flex-col items-center justify-center p-8">
@@ -187,7 +174,6 @@ export default function FaskesTerdekat() {
     );
   }
 
-  // Error state
   if (locationError && !userPosition) {
     return (
       <div className="p-4 bg-red-50 border border-red-200 rounded-md">
@@ -223,7 +209,6 @@ export default function FaskesTerdekat() {
             style={{ height: "100%", width: "100%" }}
           >
             <ResizeMap />
-            <MapUpdater position={userPosition} />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -258,7 +243,14 @@ export default function FaskesTerdekat() {
 
       {/* List Faskes */}
       <div className="mt-4">
-        <h3 className="text-lg font-semibold mb-3">Daftar Faskes Terdekat</h3>
+        <h3 className="text-lg font-semibold mb-3">
+          Daftar Faskes Terdekat 
+          {faskesList.length > 0 && (
+            <span className="text-sm font-normal text-gray-600 ml-2">
+              ({faskesList.length} ditemukan)
+            </span>
+          )}
+        </h3>
         
         {isLoading && userPosition ? (
           <div className="flex items-center justify-center p-4">
@@ -267,7 +259,7 @@ export default function FaskesTerdekat() {
           </div>
         ) : (
           <ul className="space-y-3">
-            {faskesList.length === 0 && (
+            {faskesList.length === 0 && dataLoaded && (
               <li className="p-4 bg-gray-50 rounded-md text-center">
                 Tidak ada faskes ditemukan dalam radius 1 km.
               </li>

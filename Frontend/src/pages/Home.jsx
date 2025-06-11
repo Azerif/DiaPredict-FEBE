@@ -8,6 +8,7 @@ import HeroHome from "../components/HeroHome";
 import PredictForm from "../components/PredictForm";
 import Footer from "../components/Footer";
 import NavbarAfter from "../components/NavbarAfter";
+import ReviewButton from "../components/ReviewButton";
 import { motion } from "framer-motion";
 
 export default function Home() {
@@ -30,6 +31,9 @@ export default function Home() {
         </SwiperSlide>
       </Swiper>
       <Footer showUserNav={true} />
+      
+      {/* Review Button - muncul conditional */}
+      <ReviewButton />
     </>
   );
 }
