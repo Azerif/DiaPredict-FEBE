@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'backend/**'
+  workflow_dispatch:  # Tambahkan ini untuk manual trigger
 
 jobs:
   deploy:
