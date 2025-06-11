@@ -15,7 +15,7 @@ app.use('/api/v1', routes);
 
 // Default route
 app.get('/', (req, res) => {
-  res.send('Welcome to DiaPredict API - Diabetes Prediction API');
+  res.send('Welcome to DiaPredict API');
 });
 
 // Error handling middleware
@@ -28,7 +28,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 8080;
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
