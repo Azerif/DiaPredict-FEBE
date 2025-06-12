@@ -71,6 +71,7 @@ export default function Dashboard() {
 
     if (form.password && form.password !== form.confirmPassword) {
       alertError("Password tidak cocok");
+      setIsLoading(false)
       return;
     }
 
