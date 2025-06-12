@@ -36,13 +36,17 @@ export default function PredictResult({ RiskValue, predictionData, onReset }) {
 
     // Cluster untuk model TANPA data medis (simple model)
     const simpleModelExplanations = {
-      'Populasi Lansia dengan Riwayat Kesehatan Kompleks': "Kelompok ini didominasi oleh individu usia lanjut (rata-rata ~64 tahun). Meski BMI rata-rata masih normal, prevalensi hipertensi (12.63%) dan penyakit jantung (8.36%) cukup mencolok. Riwayat merokok beragam, terutama pada kategori never_smoke dan no_info_smoke. Kelompok ini merepresentasikan lansia dengan catatan kesehatan yang perlu perhatian khusus.",
-      
-      'Anak dan Remaja dalam Kondisi Fisik Optimal': "Kelompok dengan rata-rata usia sangat muda (~14 tahun) dan BMI rendah (18.91). Hampir seluruhnya tidak memiliki riwayat hipertensi, penyakit jantung, maupun kebiasaan merokok. Cluster ini menggambarkan populasi anak dan remaja dengan profil kesehatan yang ideal.",
-      
-      'Dewasa dengan Pola Hidup Kurang Sehat': "Berisi individu dewasa (rata-rata usia ~51 tahun) dengan BMI sangat tinggi (~33.73). Banyak anggota kelompok ini memiliki riwayat hipertensi (13.67%) dan penyakit jantung (5.62%), serta riwayat merokok yang cukup tersebar. Kelompok ini mencerminkan gaya hidup yang kurang sehat dan rentan terhadap penyakit metabolik.",
-      
-      'Dewasa Muda Aktif dan Relatif Sehat': "Kelompok ini terdiri dari individu dewasa muda (usia ~28 tahun) dengan BMI normal, serta prevalensi hipertensi dan penyakit jantung yang sangat rendah. Riwayat merokok cukup bervariasi, namun mayoritas tidak merokok. Kelompok ini merepresentasikan usia produktif dengan gaya hidup relatif seimbang dan aktif."
+      'Lansia Rentan dengan Riwayat Penyakit Kronis': 
+        "Mayoritas anggota berusia sekitar 64 tahun, dengan prevalensi hipertensi (12.63%) dan penyakit jantung (8.36%) yang cukup tinggi. Meskipun BMI rata-rata tergolong normal, riwayat kesehatan menunjukkan kerentanan terhadap penyakit kronis. Terdapat pula anggota dari kelompok usia yang lebih muda, meskipun jumlahnya lebih sedikit, yang menunjukkan kondisi kesehatan serupa. Riwayat merokok cukup beragam, didominasi oleh kategori tidak pernah merokok dan tidak memiliki informasi merokok.",
+
+      'Remaja dan Anak-anak Sehat secara Fisik': 
+        "Sebagian besar anggota adalah usia muda, dengan rata-rata sekitar 14 tahun dan BMI rendah (~18.91). Hampir seluruhnya tidak memiliki riwayat hipertensi, penyakit jantung, maupun kebiasaan merokok. Profil ini mencerminkan kondisi fisik yang sangat baik dan gaya hidup sehat sejak dini.",
+
+      'Dewasa Paruh Baya dengan Risiko Metabolik Tinggi': 
+        "Kelompok ini memiliki usia rata-rata sekitar 51 tahun dan BMI sangat tinggi (~33.73). Prevalensi hipertensi (13.67%) dan penyakit jantung (5.62%) menunjukkan kecenderungan terhadap masalah metabolik. Riwayat merokok tersebar merata antar kategori, menambah potensi risiko kesehatan. Anggota dari rentang usia lainnya juga bisa termasuk jika memiliki karakteristik kesehatan yang serupa.",
+
+      'Dewasa Muda Sehat dan Produktif': 
+        "Didominasi oleh individu dengan usia rata-rata sekitar 28 tahun, BMI normal, dan tingkat hipertensi serta penyakit jantung yang sangat rendah. Riwayat merokok bervariasi, namun sebagian besar tidak memiliki kebiasaan tersebut. Profil ini mewakili individu usia produktif dengan kesehatan relatif optimal dan gaya hidup seimbang."
     };
 
     // Pilih penjelasan berdasarkan model yang digunakan

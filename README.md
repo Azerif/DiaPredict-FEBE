@@ -32,7 +32,7 @@ Capstone project for Coding Camp DBS Foundation x Dicoding 2025
    ```sh
    cd DiaPredict-FEBE
    ```
-3. Install the required packages:
+3. Install the required packages on each project folder:
    ```sh
    cd Frontend / cd Backend
    ```
@@ -40,9 +40,13 @@ Capstone project for Coding Camp DBS Foundation x Dicoding 2025
    ```sh
    npm install
    ```
-5. Run Project:
+5. Run each project folder:
    ```sh
    npm run dev
    ```
+6. You can access the local development server link from the frontend terminal
+   ```sh
+   http://localhost:5173/
+   ```
 
-Catatan : Harus Memiliki Node.js di device untuk menggunakan NPM.
+Catatan : dibutuhkan Node.js untuk menggunakan Node Package Manager (NPM).
