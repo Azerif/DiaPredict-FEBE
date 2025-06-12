@@ -19,6 +19,8 @@ Capstone project for Coding Camp DBS Foundation x Dicoding 2025
 | `Laksana Muhammad Agung Buwono` | `FC012D5Y1475` | `Front-End Web and Back-End` |[LinkedIn](https://www.linkedin.com/in/laksanamagungb/)|[GitHub](https://github.com/LkmAgung)
 | `Azrian Rifqi Radhitya` | `MC012D5Y1404` | `Machine Learning Engineer` |[LinkedIn](https://www.linkedin.com/in/azrianrifqi/)|[GitHub](https://github.com/Azerif/)
 | `Muhammad Fauzan` | `MC009D5Y1611` | `Machine Learning Engineer` |[LinkedIn](https://www.linkedin.com/in/muhammad-fauzan-16279a274/)|[GitHub](https://github.com/Fauzanbtz)
+| `Muhammad Eka Dwi Pratama` | `FC009D5Y2223` | `Front-End Web and Back-End` |[LinkedIn](www.linkedin.com/in/muhammadeka)|[GitHub](https://github.com/Arksene)
+| `Amirul Haq Ma'ruf` | `MC009D5Y0425` | `Machine Learning Engineer` |[LinkedIn](https://www.linkedin.com/in/amirul-haq/)|[GitHub](https://github.com/amirulhaqm)
 
 
 
