@@ -49,4 +49,4 @@ Capstone project for Coding Camp DBS Foundation x Dicoding 2025
    http://localhost:5173/
    ```
 
-Catatan : dibutuhkan Node.js untuk menggunakan Node Package Manager (NPM).
+Catatan : dibutuhkan Node.js untuk menggunakan Node Package Manager (NPM) dan env frontend berupa link api lokal: http://localhost:3000/api/v1.
